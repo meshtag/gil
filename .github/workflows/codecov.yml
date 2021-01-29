@@ -26,4 +26,4 @@ jobs:
         && sudo apt-get install lcov #Installing dependencies
     - run:
         cd .ci
-        sh ./coverage.sh
+        && sh ./coverage.sh
