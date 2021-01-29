@@ -1,34 +1,33 @@
-name: Example workflow for Codecov
-on: [push]
+name: Codecov coverage
+
+on: 
+  pull_request:
+  push:
+    branches:
+      - master
+      - develop
+      - feature/**
+
+env:
+  LIBRARY: gil
+  UBSAN_OPTIONS: print_stacktrace=1
+
 jobs:
-  run:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    env:
-      OS: ${{ matrix.os }}
-      PYTHON: '3.7'
+  test:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - name: Setup Python
-      uses: actions/setup-python@master
-      with:
-        python-version: 3.7
-    - name: Generate coverage report
-      run: |
-        pip install pytest
-        pip install pytest-cov
-        pytest --cov=./ --cov-report=xml
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage1.xml,./coverage2.xml
-        directory: ./coverage/reports/
-        flags: unittests
-        env_vars: OS,PYTHON
-        name: codecov-umbrella
-        fail_ci_if_error: true
-        path_to_write_report: ./coverage/codecov_report.txt
-        verbose: true
+    - uses: actions/checkout@v2 # Check out our repository
+    - run: 
+        sudo apt-get install g++-6
+        sudo apt-get install libpng-dev
+        sudo apt-get install libjpeg-dev
+        sudo apt-get install libtiff5-dev
+        sudo apt-get install libraw-dev
+        sudo apt-get install lcov #Install dependencies
+    - run:
+        set -e
+        lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
+        lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
+        lcov --list coverage.info
+        cd libs/gil
+    - run: bash <(curl -s https://codecov.io/bash) -f ../../coverage.info || echo "Codecov did not collect coverage reports" # Upload to Codecov
