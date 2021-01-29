@@ -19,6 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2 # Check out our repository
     - run: 
+        sudo apt update
         sudo apt-get install g++-6
         sudo apt-get install libpng-dev
         sudo apt-get install libjpeg-dev
