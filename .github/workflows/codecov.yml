@@ -42,9 +42,7 @@ jobs:
         pwd
         whereis bin.v2
         cd .. && ls
-        cd .. && ls
-        cd .. && ls
-        cd .. && ls
+        cd boost-root
         bash .ci/coverage.sh
 
     
