@@ -16,16 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2 # Check out our repository
-      run: sudo apt update 
-      run: 
+    - run: sudo apt update 
+    - run: 
         sudo apt-get install g++-6
         && sudo apt-get install libpng-dev
         && sudo apt-get install libjpeg-dev
         && sudo apt-get install libtiff5-dev
         && sudo apt-get install libraw-dev
         && sudo apt-get install lcov #Installing dependencies
-      run:  
+    - run:  
        echo .ci/coverage.sh
-      shell: bash
+    - shell: bash
 
     
