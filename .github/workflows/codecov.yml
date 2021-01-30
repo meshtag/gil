@@ -25,7 +25,6 @@ jobs:
         && sudo apt-get install libraw-dev
         && sudo apt-get install lcov #Installing dependencies
     - run:  
-        cd && cd/usr/bin && ls
-
+        bash .ci/coverage.sh
 
     
