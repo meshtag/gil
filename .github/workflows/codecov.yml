@@ -40,6 +40,7 @@ jobs:
         sudo apt-get install lcov 
         ls
         pwd
+        whereis bin.v2
         bash .ci/coverage.sh
 
     
