@@ -42,7 +42,7 @@ jobs:
         pwd
         whereis bin.v2
         cd .. && ls
-        cd boost-root
-        bash .ci/coverage.sh
+        cd boost-root && ls
+        bash /home/runner/work/gil/gil/.ci/coverage.sh
 
     
