@@ -1,7 +1,7 @@
 #! /bin/bash
 set -e
 echo I was here 1
-lcov --directory /usr/local/bin --capture --no-external --directory . --output-file coverage.info > /dev/null 2>&1
+lcov --directory bin.v2 --capture --no-external --directory . --output-file coverage.info > /dev/null 2>&1
 echo 2
 lcov --extract coverage.info . --output-file coverage.info > /dev/null
 echo 3
