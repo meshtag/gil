@@ -1,7 +1,9 @@
 #! /bin/bash
 set -e
 echo I was here 1
-lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
+lcov --directory bin.v2 
+echo 1_1
+lcov --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
 echo 2
 lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
 echo 3
