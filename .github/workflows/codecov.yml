@@ -27,6 +27,7 @@ jobs:
     - run:  
         # chmod +x ".ci/coverage.sh"
         # && .ci/coverage.sh
-        ls && cd .ci
+        cd .ci && ls && nano coverage.sh && chmod +x coverage.sh
+
 
     
