@@ -41,6 +41,10 @@ jobs:
         ls
         pwd
         whereis bin.v2
+        cd .. && ls
+        cd .. && ls
+        cd .. && ls
+        cd .. && ls
         bash .ci/coverage.sh
 
     
