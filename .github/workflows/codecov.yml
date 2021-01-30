@@ -40,6 +40,6 @@ jobs:
         sudo apt-get install lcov 
         ls
         pwd
-        bash libs/gil/.ci/coverage.sh
+        bash .ci/coverage.sh
 
     
