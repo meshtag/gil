@@ -16,15 +16,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2 # Check out our repository
-    - run: sudo apt update 
-    - run: 
+
+    - name: Setup Boost
+      run: |
+        REF=${GITHUB_BASE_REF:-$GITHUB_REF}
+        BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
+        cd ..
+        git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+        cd boost-root
+        cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
+        git submodule update --init tools/boostdep
+        python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
+        ./bootstrap.sh
+        ./b2 -d0 headers
+
+    - name: Use codecov
+      run: |
         sudo apt-get install g++-6
         && sudo apt-get install libpng-dev
         && sudo apt-get install libjpeg-dev
         && sudo apt-get install libtiff5-dev
         && sudo apt-get install libraw-dev
-        && sudo apt-get install lcov #Installing dependencies
-    - run:  
-        cd .ci && sh ./coverage.sh
+        && sudo apt-get install lcov #Installing dependencies  
+        && bash libs/gil/.ci/coverage.sh
 
     
