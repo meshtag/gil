@@ -1,7 +1,9 @@
 #! /bin/bash
 set -e
 lcov --directory bin.v2 --capture --no-external --directory $(pwd)  --output-file coverage.info > /dev/null 2>&1
-echo $(pwd)'/gil/*'
+echo $(pwd)'/gil/'
+nano coverage.info
+echo $(pwd)'/gil/' && ls
 lcov --extract coverage.info $(pwd)'/gil/*' --output-file coverage.info > /dev/null
 lcov --list coverage.info
 cd /home/runner/work/gil/gil
