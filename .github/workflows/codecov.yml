@@ -29,6 +29,9 @@ jobs:
         python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
         ./bootstrap.sh
         ./b2 -d0 headers
+
+    - name: CodeCov
+      run: |
         bash /home/runner/work/gil/gil/.ci/coverage.sh
 
     # - name: Use codecov
