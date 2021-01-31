@@ -32,7 +32,7 @@ jobs:
 
     - name: CodeCov
       run: |
-        bash /home/runner/work/gil/gil/.ci/coverage.sh
+        bash libs/gil/.ci/coverage.sh
 
     # - name: Use codecov
     #   run: |
