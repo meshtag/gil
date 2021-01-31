@@ -29,20 +29,21 @@ jobs:
         python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
         ./bootstrap.sh
         ./b2 -d0 headers
-
-    - name: Use codecov
-      run: |
-        sudo apt-get install g++-6
-        sudo apt-get install libpng-dev
-        sudo apt-get install libjpeg-dev
-        sudo apt-get install libtiff5-dev
-        sudo apt-get install libraw-dev
-        sudo apt-get install lcov 
-        ls
-        pwd
-        whereis bin.v2
-        cd .. && ls
-        cd boost-root && ls
         bash /home/runner/work/gil/gil/.ci/coverage.sh
+
+    # - name: Use codecov
+    #   run: |
+    #     sudo apt-get install g++-6
+    #     sudo apt-get install libpng-dev
+    #     sudo apt-get install libjpeg-dev
+    #     sudo apt-get install libtiff5-dev
+    #     sudo apt-get install libraw-dev
+    #     sudo apt-get install lcov 
+    #     ls
+    #     pwd
+    #     whereis bin.v2
+    #     cd .. && ls
+    #     cd boost-root && ls
+    #     bash /home/runner/work/gil/gil/.ci/coverage.sh
 
     
