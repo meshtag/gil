@@ -8,24 +8,47 @@ void draw_rect_impl(SrcView const& src_view, const int tlc0, const int tlc1, con
     //Following four loops draw edges of the rectangle.
     for(std::ptrdiff_t view_col = tlc0,view_row = tlc1;view_col <= brc0;++view_col)
         for(int i = 0;i < thickness;++i)
-            src_view(view_col,view_row + i) = colour;
+            src_view(view_col,view_row - i) = colour;
     for(std::ptrdiff_t view_row = tlc1,view_col = brc0;view_row <= brc1;++view_row)
         for(int i = 0;i < thickness;++i)
             src_view(view_col + i,view_row) = colour;
     for(std::ptrdiff_t view_row = tlc1,view_col = tlc0;view_row <= brc1;++view_row)
         for(int i = 0;i < thickness;++i)
-            src_view(view_col + i,view_row) = colour;
+            src_view(view_col - i,view_row) = colour;
     for(std::ptrdiff_t view_col = tlc0,view_row = brc1;view_col <= brc0;++view_col)
         for(int i = 0;i < thickness;++i)
             src_view(view_col,view_row + i) = colour;
     std::ptrdiff_t view_col = brc0,view_row = brc1;
-    //Following loop completes the bottom right part of the rectangle which otherwise would have 
-    //remained as it is.
+    // Following loop completes the bottom right part of the rectangle.
     for(int j = 0;j<thickness;++j)
     {
         for(int i = 0;i < thickness;++i)
             src_view(view_col,view_row + i) = colour;
         ++view_col;
+    }
+    view_col = tlc0,view_row = tlc1;
+    // Following loop completes the top left part of the rectangle.
+    for(int j = 0;j<thickness;++j)
+    {
+        for(int i = 0;i < thickness;++i)
+            src_view(view_col,view_row - i) = colour;
+        --view_col;
+    }
+    view_col = brc0,view_row = tlc1;
+    // Following loop completes the top right part of the rectangle.
+    for(int j = 0;j<thickness;++j)
+    {
+        for(int i = 0;i < thickness;++i)
+            src_view(view_col + i,view_row) = colour;
+        --view_row;
+    }
+    view_col = tlc0,view_row = brc1;
+    // Following loop completes the bottom left part of the rectangle.
+    for(int j = 0;j<thickness;++j)
+    {
+        for(int i = 0;i < thickness;++i)
+            src_view(view_col - i,view_row) = colour;
+        ++view_row;
     }
 }
 
