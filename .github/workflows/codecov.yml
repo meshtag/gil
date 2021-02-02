@@ -17,37 +17,37 @@ jobs:
     steps:
     - uses: actions/checkout@v2 # Check out our repository
 
-    - name: Setup Boost
-      run: |
-        REF=${GITHUB_BASE_REF:-$GITHUB_REF}
-        BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
-        cd ..
-        git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
-        cd boost-root
-        cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
-        git submodule update --init tools/boostdep
-        python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
-        ./bootstrap.sh
-        ./b2 -d0 headers
-
-    - name: Create user-config.jam
-      run: |
-        echo "using clang : : clang++-8 ;" > ~/user-config.jam
-
-    - name: Run tests
-      run: |
-        cd ../boost-root
-        ./b2 -j3 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} define=${{matrix.define}} variant=debug,release
-
-    # - name: CodeCov
+    # - name: Setup Boost
     #   run: |
-    #     sudo apt-get install g++-6
-    #     sudo apt-get install libpng-dev
-    #     sudo apt-get install libjpeg-dev
-    #     sudo apt-get install libtiff5-dev
-    #     sudo apt-get install libraw-dev
-    #     sudo apt-get install lcov
-    #     bash libs/gil/.ci/coverage.sh
+    #     REF=${GITHUB_BASE_REF:-$GITHUB_REF}
+    #     BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
+    #     cd ..
+    #     git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+    #     cd boost-root
+    #     cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
+    #     git submodule update --init tools/boostdep
+    #     python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
+    #     ./bootstrap.sh
+    #     ./b2 -d0 headers
+
+    # - name: Create user-config.jam
+    #   run: |
+    #     echo "using clang : : clang++-8 ;" > ~/user-config.jam
+
+    # - name: Run tests
+    #   run: |
+    #     cd ../boost-root
+    #     ./b2 -j3 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} define=${{matrix.define}} variant=debug,release
+
+    - name: CodeCov
+      run: |
+        sudo apt-get install g++-6
+        sudo apt-get install libpng-dev
+        sudo apt-get install libjpeg-dev
+        sudo apt-get install libtiff5-dev
+        sudo apt-get install libraw-dev
+        sudo apt-get install lcov
+        bash libs/gil/.ci/coverage.sh
 
     # - name: Use codecov
     #   run: |
