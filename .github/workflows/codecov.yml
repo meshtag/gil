@@ -39,15 +39,15 @@ jobs:
         cd ../boost-root
         ./b2 -j3 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} define=${{matrix.define}} variant=debug,release
 
-    - name: CodeCov
-      run: |
-        sudo apt-get install g++-6
-        sudo apt-get install libpng-dev
-        sudo apt-get install libjpeg-dev
-        sudo apt-get install libtiff5-dev
-        sudo apt-get install libraw-dev
-        sudo apt-get install lcov
-        bash libs/gil/.ci/coverage.sh
+    # - name: CodeCov
+    #   run: |
+    #     sudo apt-get install g++-6
+    #     sudo apt-get install libpng-dev
+    #     sudo apt-get install libjpeg-dev
+    #     sudo apt-get install libtiff5-dev
+    #     sudo apt-get install libraw-dev
+    #     sudo apt-get install lcov
+    #     bash libs/gil/.ci/coverage.sh
 
     # - name: Use codecov
     #   run: |
