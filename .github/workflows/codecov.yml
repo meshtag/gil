@@ -47,7 +47,6 @@ jobs:
         sudo apt-get install libtiff5-dev
         sudo apt-get install libraw-dev
         sudo apt-get install lcov 
-        cd ../boost-root
         bash ./gil/.ci/coverage.sh
 
     
