@@ -1,5 +1,7 @@
 #! /bin/bash
 set -e
+ls
+pwd
 cd ..
 ls
 pwd
