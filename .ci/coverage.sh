@@ -1,5 +1,5 @@
 #! /bin/bash
-set -e
+#set -e
 cd boost-root
 ls
 pwd
