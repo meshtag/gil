@@ -1,7 +1,14 @@
 #! /bin/bash
 set -e
 cd ..
-cd ../boost-root
+ls
+pwd
+cd ..
+ls
+pwd
+cd ..
+ls
+pwd
 lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
 lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
 lcov --list coverage.info
