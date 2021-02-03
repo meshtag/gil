@@ -2,6 +2,8 @@
 #define BOOST_GIL_EXTENSION_DRAW_CIRCLE_AND_RECT_HPP
 #include <math.h>
 
+// (tl0,tl1) -> top left corner co-ordinates
+// (br0,br1) -> bottom right corner co-ordinates
 template <typename SrcView>
 void draw_rect_impl(SrcView const& src_view, const int tlc0, const int tlc1, const int brc0, const int brc1,const int colour, const int thickness)
 {
