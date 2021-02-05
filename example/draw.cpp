@@ -12,8 +12,4 @@ int main()
     //desired_colour_of_border_in_r,g,b_format,thickness of border)
     draw_rect(view(img_rect),275,300,600,600,0,0,105,30);
     write_view("out-draw_add_rectangle.png", view(img_rect), png_tag{});
-    //draw_circle(Input_image_view,x_co-ordinate_of_center,y_co-ordinate_of_center,radius
-    //desired_colour_of_border_in_r,g,b_format,thickness_of_border)
-    draw_circle(view(img_circle),600,275,40,0,105,0,30);
-    write_view("out-draw_add_circle.png", view(img_circle), png_tag{});
 }

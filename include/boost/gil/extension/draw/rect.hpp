@@ -66,37 +66,4 @@ void draw_rect(SrcView const& src_view, const int tlc0, const int tlc1, const in
         );
     }
 }
-
-//Circle is made by rotating the radius vector around the center and changing the 
-//colour of pixels at its tip. 
-template <typename SrcView>
-void draw_circle_impl(SrcView const& src_view, const int center_x, const int center_y, const int input_radius, const int colour,const int thickness)
-{
-    double angle = 0;
-    int radius = input_radius;
-    for(int i=0;i<thickness;++i)
-    {
-        for(double i=0.0;i <= 1.570796;i += 0.00001)
-        {
-            src_view(center_x + (int)(radius*cos(i)),center_y + (int)(radius*sin(i))) = colour;
-            src_view(center_x + (int)(radius*cos(i)),center_y - (int)(radius*sin(i))) = colour;
-            src_view(center_x - (int)(radius*cos(i)),center_y + (int)(radius*sin(i))) = colour;
-            src_view(center_x - (int)(radius*cos(i)),center_y - (int)(radius*sin(i))) = colour; 
-        }
-        ++radius;
-    }
-}
-
-template <typename SrcView>
-void draw_circle(SrcView const& src_view, const int center_x, const int center_y, const int radius, const int r,const int g,const int b,const int thickness)
-{
-    int colours[] = {r,g,b};
-    for (std::size_t i = 0; i < src_view.num_channels(); i++)
-    {
-            draw_circle_impl(
-            nth_channel_view(src_view, i),
-            center_x,center_y,radius,colours[i],thickness
-        );
-    }
-}
 #endif //BOOST_GIL_EXTENSION_DRAW_CIRCLE_AND_RECT_HPP 
