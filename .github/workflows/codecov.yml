@@ -22,5 +22,4 @@ jobs:
           sudo apt-get install libtiff5-dev
           sudo apt-get install libraw-dev
           sudo apt-get install lcov
-          cd .ci
-          ls
+          bash .ci/coverage.sh
