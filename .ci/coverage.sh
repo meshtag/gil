@@ -1,7 +1,8 @@
 #! /bin/bash
-echo "I was here in coverage.sh"
 set -e
+echo "I was here in coverage.sh"
 lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
+echo "I reached even here"
 lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
 lcov --list coverage.info
 cd libs/gil
