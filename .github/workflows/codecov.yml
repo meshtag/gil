@@ -59,6 +59,4 @@ jobs:
           echo "After lcov"
           ls
           echo "3rd desired"
-          echo "ls libs"
-          ls -a libs/gil
           bash .ci/coverage.sh
