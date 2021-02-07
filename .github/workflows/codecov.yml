@@ -22,6 +22,9 @@ jobs:
         BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
         cd ..
         git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+        echo "ls starts"
+        ls
+        echo "ls ended"
         cd boost-root
         cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
         git submodule update --init tools/boostdep
