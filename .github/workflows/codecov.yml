@@ -30,6 +30,7 @@ jobs:
         ./bootstrap.sh
         ./b2 -d0 headers
         ls
+        pwd
         echo "Desired ls ended"
 
     - name: Create user-config.jam
