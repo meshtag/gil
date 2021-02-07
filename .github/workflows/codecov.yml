@@ -9,6 +9,7 @@ env:
   CXXSTD: 11 
   B2_OPTIONS: "coverage=on"
   LIBRARY: gil
+  UBSAN_OPTIONS: print_stacktrace=1
 
 jobs:
   test:
