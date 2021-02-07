@@ -5,3 +5,10 @@ lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > 
 lcov --list coverage.info
 cd libs/gil
 bash <(curl -s https://codecov.io/bash) -f ../../coverage.info || echo "Codecov did not collect coverage reports"
+
+#  echo "I was even here"
+#         cd boost-root
+#         echo "I was here"
+#         export BOOST_ROOT=$(pwd)
+#         ./bootstrap.sh
+#         ls

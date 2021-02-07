@@ -29,12 +29,8 @@ jobs:
         python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
         ./bootstrap.sh
         ./b2 -d0 headers
-        echo "I was even here"
-        cd boost-root
-        echo "I was here"
-        export BOOST_ROOT=$(pwd)
-        ./bootstrap.sh
         ls
+        echo "Desired ls ended"
       
     - name: Install required packages 
       run: |
