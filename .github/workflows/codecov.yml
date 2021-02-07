@@ -61,5 +61,5 @@ jobs:
           ls
           echo "3rd desired"
           echo "ls libs"
-          ls libs/gil
+          ls -a libs/gil
           bash libs/gil/.ci/coverage.sh
