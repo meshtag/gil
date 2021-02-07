@@ -1,6 +1,7 @@
 #! /bin/bash
 set -e
 echo "I was here in coverage.sh error check"
+cd ../boost-root
 lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
 echo "I reached even here"
 lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
