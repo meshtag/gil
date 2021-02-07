@@ -3,8 +3,6 @@ name: Codecov coverage
 on: [push,pull_request]
 
 env:
-  LIBRARY: gil
-  UBSAN_OPTIONS: print_stacktrace=1
   COMPILER: g++-6 
   VARIANT: debug 
   TOOLSET: gcc 
@@ -17,72 +15,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2 # Check out our repository
 
-    #  - name: Install packages
-    #     if: matrix.install
-    #     run: sudo apt install clang++-8
-
-    #   - name: Setup Boost
-    #     run: |
-    #       REF=${GITHUB_BASE_REF:-$GITHUB_REF}
-    #       BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
-    #       cd ..
-    #       git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
-    #       cd boost-root
-    #       cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
-    #       git submodule update --init tools/boostdep
-    #       python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
-    #       ./bootstrap.sh
-    #       ./b2 -d0 headers
-    #   - name: Create user-config.jam
-    #     run: |
-    #       echo "using ${{matrix.toolset}} : : ${{matrix.compiler}} ;" > ~/user-config.jam
-    #   - name: Run tests
-    #     run: |
-    #       cd ../boost-root
-    #       ./b2 -j3 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} variant=debug,release
-    #       # - name: Use codecov
-   
-      - name:Codecov
+    - name: Install required packages 
       run: |
-        sudo apt-get install g++-6
-        sudo apt-get install libpng-dev
-        sudo apt-get install libjpeg-dev
-        sudo apt-get install libtiff5-dev
-        sudo apt-get install libraw-dev
-        sudo apt-get install lcov
-        ls 
-        bash .ci/coverage.sh
-
-
-    # - name: Setup Boost
-    #   run: |
-    #     REF=${GITHUB_BASE_REF:-$GITHUB_REF}
-    #     BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
-    #     cd ..
-    #     git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
-    #     cd boost-root
-    #     cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
-    #     git submodule update --init tools/boostdep
-    #     python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
-    #     ./bootstrap.sh
-    #     ./b2 -d0 headers
-
-    # - name: Create user-config.jam
-    #   run: |
-    #     echo "using clang : : clang++-8 ;" > ~/user-config.jam
-
-    # - name: Run tests
-    #   run: |
-    #     cd ../boost-root
-    #     ./b2 -j3 libs/$LIBRARY/test toolset=${{matrix.toolset}} cxxstd=${{matrix.cxxstd}} define=${{matrix.define}} variant=debug,release
-
-    # - name: Use codecov
-    #   run: |
-    #     sudo apt-get install g++-6
-    #     sudo apt-get install libpng-dev
-    #     sudo apt-get install libjpeg-dev
-    #     sudo apt-get install libtiff5-dev
-    #     sudo apt-get install libraw-dev
-    #     sudo apt-get install lcov
-    #     ls 
-    #     bash .ci/coverage.sh
+          sudo apt-get install libpng-dev
+          sudo apt-get install libjpeg-dev
+          sudo apt-get install libtiff5-dev
+          sudo apt-get install libraw-dev
+          sudo apt-get install lcov
+          ls 
+          g++ -v
