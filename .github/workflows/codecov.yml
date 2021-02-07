@@ -58,4 +58,4 @@ jobs:
           echo "Before lcov"
           sudo apt-get install lcov
           echo "After lcov"
-          bash .ci/coverage.sh
+          bash libs/gil/.ci/coverage.sh
