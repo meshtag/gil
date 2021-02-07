@@ -2,7 +2,7 @@
 set -e
 echo "I was here in coverage.sh check error"
 cd ../boost-root
-ls bin.v2
+ls bin.v2/project-cache.jam
 echo "ls bin.v2"
 lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
 echo "I reached even here"
