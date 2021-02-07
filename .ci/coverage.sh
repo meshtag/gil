@@ -1,10 +1,13 @@
 #! /bin/bash
 set -e
-echo "I was here in coverage.sh error check"
+echo "I was here in coverage.sh check error"
 cd ../boost-root
+pwd
+ls
 lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
 echo "I reached even here"
 lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
+echo "I reached even even here"
 lcov --list coverage.info
 cd libs/gil
 bash <(curl -s https://codecov.io/bash) -f ../../coverage.info || echo "Codecov did not collect coverage reports"
