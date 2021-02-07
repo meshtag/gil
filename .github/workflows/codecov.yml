@@ -35,6 +35,7 @@ jobs:
         export BOOST_ROOT=$(pwd)
         ./bootstrap.sh
         ls
+        echo "I was here"
       
     - name: Install required packages 
       run: |
