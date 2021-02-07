@@ -2,9 +2,8 @@
 set -e
 echo "I was here in coverage.sh check error"
 cd ../boost-root
-pwd
-ls
-
+ls bin.v2
+echo "ls bin.v2"
 lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
 echo "I reached even here"
 lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
