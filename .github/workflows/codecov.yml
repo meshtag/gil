@@ -49,6 +49,7 @@ jobs:
 
     - name: Install required packages 
       run: |
+          cd ../boost-root
           echo "First desired pwd"
           sudo apt-get install libpng-dev
           sudo apt-get install libjpeg-dev
