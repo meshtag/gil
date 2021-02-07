@@ -49,8 +49,9 @@ jobs:
 
     - name: Install required packages 
       run: |
-          cd ..
-
+          cd ../gil
+          pwd
+          echo "First desired pwd"
           sudo apt-get install libpng-dev
           sudo apt-get install libjpeg-dev
           sudo apt-get install libtiff5-dev
