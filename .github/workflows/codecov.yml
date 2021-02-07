@@ -8,6 +8,7 @@ env:
   TOOLSET: gcc 
   CXXSTD: 11 
   B2_OPTIONS: "coverage=on"
+  LIBRARY: gil
 
 jobs:
   test:
