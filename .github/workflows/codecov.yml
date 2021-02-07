@@ -49,8 +49,6 @@ jobs:
 
     - name: Install required packages 
       run: |
-          cd ../gil
-          pwd
           echo "First desired pwd"
           sudo apt-get install libpng-dev
           sudo apt-get install libjpeg-dev
@@ -61,4 +59,4 @@ jobs:
           echo "After lcov"
           ls
           echo "3rd desired"
-          bash .ci/coverage.sh
+          bash libs/gil/.ci/coverage.sh
