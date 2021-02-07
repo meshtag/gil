@@ -38,5 +38,7 @@ jobs:
           sudo apt-get install libjpeg-dev
           sudo apt-get install libtiff5-dev
           sudo apt-get install libraw-dev
+          echo "Before lcov"
           sudo apt-get install lcov
+          echo "After lcov"
           bash .ci/coverage.sh
