@@ -31,7 +31,11 @@ jobs:
         ./b2 -d0 headers
         ls
         echo "Desired ls ended"
-      
+
+    - name: Create user-config.jam
+      run: |
+        echo "using A : : B ;" > ~/user-config.jam
+
     - name: Install required packages 
       run: |
           sudo apt-get install libpng-dev
