@@ -13,6 +13,7 @@ cd ../boost-root
 ./b2 -j3 coverage=on libs/gil/test toolset=gcc cxxstd=11 variant=debug,release
 
 echo "ls bin.v2"
+ls -a bin.v2
 lcov --directory bin.v2 --capture --no-external --directory $(pwd) --output-file coverage.info > /dev/null 2>&1
 echo "I reached even here"
 lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
