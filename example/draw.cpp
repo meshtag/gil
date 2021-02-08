@@ -1,5 +1,5 @@
 #include <boost/gil/extension/io/png.hpp>
-#include<boost/gil/extension/draw/circle_and_rect.hpp>
+#include<boost/gil/extension/draw/rect.hpp>
 
 int main()
 {
