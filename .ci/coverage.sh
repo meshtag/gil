@@ -10,6 +10,8 @@ cd ../boost-root
 # ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/extension/toolbox
 # ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/extension/io//simple
 
+echo "ls bin.v2 1"
+ls -a bin.v2
 ./b2 -j3 coverage=on libs/gil/test toolset=gcc cxxstd=11 variant=debug,release
 
 echo "ls bin.v2"
