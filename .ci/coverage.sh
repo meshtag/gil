@@ -8,7 +8,7 @@ cd ../boost-root
 # ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/extension/dynamic_image
 # ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/extension/numeric
 # ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/extension/toolbox
-# ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/extension/io//simple
+# ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/extension/io//simple    
 
 echo "ls bin.v2 1"
 ls -a bin.v2
