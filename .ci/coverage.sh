@@ -21,5 +21,7 @@ echo "I reached even here"
 lcov --extract coverage.info $(pwd)'/boost/gil/*' --output-file coverage.info > /dev/null
 echo "I reached even even here"
 lcov --list coverage.info
+echo "I reached even even even here"
 cd libs/gil
+echo "I reached even even even even here"
 bash <(curl -s https://codecov.io/bash) -f ../../coverage.info || echo "Codecov did not collect coverage reports"
