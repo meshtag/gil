@@ -1,7 +1,7 @@
 #! /bin/bash
 set -e
 echo "I was here in coverage.sh check error"
-# cd ../boost-root
+cd ../boost-root
 
 # ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/core
 # ./b2 -j3 coverage=on toolset=gcc variant=debug cxxstd=11 libs/gil/test/legacy
