@@ -49,7 +49,7 @@ jobs:
         sudo apt-get install lcov
         ls
         echo "3rd desired"
-        bash .ci/coverage.sh
+        bash libs/gil/.ci/coverage.sh
 #         ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/core
 # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/legacy
 # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/dynamic_image
