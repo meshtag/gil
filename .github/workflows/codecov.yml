@@ -41,6 +41,15 @@ jobs:
         ls
         echo "2nd desired"
         echo "using clang : : clang++-8 ;" > ~/user-config.jam
+        sudo apt-get install g++-6
+        sudo apt-get install libpng-dev
+        sudo apt-get install libjpeg-dev
+        sudo apt-get install libtiff5-dev
+        sudo apt-get install libraw-dev
+        sudo apt-get install lcov
+        ls
+        echo "3rd desired"
+        bash .ci/coverage.sh
 #         ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/core
 # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/legacy
 # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/dynamic_image
@@ -48,14 +57,6 @@ jobs:
 # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/toolbox
 # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/io//simple
 
-    - name: Install required packages 
-      run: |
-          sudo apt-get install g++-6
-          sudo apt-get install libpng-dev
-          sudo apt-get install libjpeg-dev
-          sudo apt-get install libtiff5-dev
-          sudo apt-get install libraw-dev
-          sudo apt-get install lcov
-          ls
-          echo "3rd desired"
-          bash .ci/coverage.sh
+    # - name: Install required packages 
+    #   run: |
+          
