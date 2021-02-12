@@ -1,60 +1,60 @@
-name: Codecov coverage
+# name: Codecov coverage
 
-on: [push,pull_request]
+# on: [push,pull_request]
 
-env:
-  COMPILER: g++-6 
-  VARIANT: debug 
-  TOOLSET: gcc 
-  CXXSTD: 11 
-  B2_OPTIONS: "coverage=on"
-  LIBRARY: gil
-  UBSAN_OPTIONS: print_stacktrace=1
+# env:
+#   COMPILER: g++-6 
+#   VARIANT: debug 
+#   TOOLSET: gcc 
+#   CXXSTD: 11 
+#   B2_OPTIONS: "coverage=on"
+#   LIBRARY: gil
+#   UBSAN_OPTIONS: print_stacktrace=1
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2 
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v2 
 
-    - name: Setup Boost
-      run: |
-        REF=${GITHUB_BASE_REF:-$GITHUB_REF}
-        BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
-        cd ..
-        git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
-        cd boost-root
-        cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
-        git submodule update --init tools/boostdep
-        python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
-        ./bootstrap.sh
-        ./b2 -d0 headers
-        ls
-        pwd
-        echo "Desired ls ended"
+#     - name: Setup Boost
+#       run: |
+#         REF=${GITHUB_BASE_REF:-$GITHUB_REF}
+#         BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
+#         cd ..
+#         git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+#         cd boost-root
+#         cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
+#         git submodule update --init tools/boostdep
+#         python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
+#         ./bootstrap.sh
+#         ./b2 -d0 headers
+#         ls
+#         pwd
+#         echo "Desired ls ended"
 
-    - name: Create user-config.jam
-      run: |
-        cd ../boost-root
-        pwd
-        ls
-        echo "2nd desired"
-        echo "using clang : : clang++-8 ;" > ~/user-config.jam
-#         ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/core
-# ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/legacy
-# ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/dynamic_image
-# ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/numeric
-# ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/toolbox
-# ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/io//simple
+#     - name: Create user-config.jam
+#       run: |
+#         cd ../boost-root
+#         pwd
+#         ls
+#         echo "2nd desired"
+#         echo "using clang : : clang++-8 ;" > ~/user-config.jam
+# #         ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/core
+# # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/legacy
+# # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/dynamic_image
+# # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/numeric
+# # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/toolbox
+# # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/io//simple
 
-    - name: Install required packages 
-      run: |
-          sudo apt-get install g++-6
-          sudo apt-get install libpng-dev
-          sudo apt-get install libjpeg-dev
-          sudo apt-get install libtiff5-dev
-          sudo apt-get install libraw-dev
-          sudo apt-get install lcov
-          ls
-          echo "3rd desired"
-          bash .ci/coverage.sh
+#     - name: Install required packages 
+#       run: |
+#           sudo apt-get install g++-6
+#           sudo apt-get install libpng-dev
+#           sudo apt-get install libjpeg-dev
+#           sudo apt-get install libtiff5-dev
+#           sudo apt-get install libraw-dev
+#           sudo apt-get install lcov
+#           ls
+#           echo "3rd desired"
+#           bash .ci/coverage.sh

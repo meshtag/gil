@@ -1,0 +1,35 @@
+name: Codecov coverage
+
+on: [push,pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2 
+
+    - name: Setup Boost
+      run: |
+        REF=${GITHUB_BASE_REF:-$GITHUB_REF}
+        BOOST_BRANCH=develop && [ "$REF" == "master" ] && BOOST_BRANCH=master || true
+        cd ..
+        git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+        cd boost-root
+        cp -r $GITHUB_WORKSPACE/* libs/$LIBRARY
+        git submodule update --init tools/boostdep
+        python tools/boostdep/depinst/depinst.py --git_args "--jobs 3" $LIBRARY
+        ./bootstrap.sh
+        ./b2 -d0 headers
+
+    - name: Get doc related files
+      run: |
+        pip3 --version
+        pip3 install --upgrade pip
+        pip3 install --user sphinx>=2.1
+        sphinx-build --version
+    
+    - name: Doc upload
+      run: |
+        export GH_TOKEN
+        cd libs/gil
+        bash .ci/upload_docs.sh
