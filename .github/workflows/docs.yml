@@ -41,6 +41,6 @@ jobs:
     - name: Doc upload
       run: |
         export GH_TOKEN
-        cd libs/gil
         ls
+        cd libs/gil
         bash .ci/upload_docs.sh
