@@ -50,6 +50,7 @@ jobs:
 # ./b2 -j 2 $B2_OPTIONS toolset=$TOOLSET variant=$VARIANT cxxstd=$CXXSTD libs/gil/test/extension/io//simple
 
   test1:
+    needs: test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
