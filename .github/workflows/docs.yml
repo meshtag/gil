@@ -40,6 +40,6 @@ jobs:
     
     - name: Doc upload
       run: |
-        export {{$secrets.GITHUB_TOKEN}}
+        export ${{ secrets.GITHUB_TOKEN }}
         ls
         bash .ci/upload_docs.sh
