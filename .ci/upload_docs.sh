@@ -4,6 +4,8 @@ set -e # Exit with nonzero exit code if anything fails
 SOURCE_BRANCH="master"
 TARGET_BRANCH="gh-pages"
 
+echo "I reached here"
+
 if [ -z "$GH_TOKEN" ]; then
     echo "Error: GH_TOKEN is undefined"
     exit 1
