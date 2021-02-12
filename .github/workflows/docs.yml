@@ -36,7 +36,7 @@ jobs:
         pip3 --version
         pip3 install --upgrade pip
         pip3 install --user sphinx>=2.1
-        sphinx-build --version
+        
     
     - name: Doc upload
       run: |
