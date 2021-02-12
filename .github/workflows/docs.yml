@@ -2,6 +2,16 @@ name: Codecov coverage
 
 on: [push,pull_request]
 
+env:
+  COMPILER: g++-6 
+  VARIANT: debug 
+  TOOLSET: gcc 
+  CXXSTD: 11 
+  B2_OPTIONS: "coverage=on"
+  LIBRARY: gil
+  UBSAN_OPTIONS: print_stacktrace=1
+
+
 jobs:
   test:
     runs-on: ubuntu-latest
