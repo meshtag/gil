@@ -288,9 +288,9 @@ int main()
     pixel_fill_rgb(expected_center_middle_vector, expected_center_middle_img);
     pixel_fill_rgb(expected_left_top_vector, expected_left_top_img);
 
-    //  using aligned_t =  gil::aligned<gil::rgb8_view_t>;
-    //  aligned_t aligned(gil::view(original_image), aligned_t::center | aligned_t::middle);
-    //  aligned(obtained_center_middle_view);
+     using aligned_t =  gil::aligned<gil::rgb8_view_t>;
+     aligned_t aligned(gil::view(original_image), aligned_t::center | aligned_t::middle);
+     aligned(obtained_center_middle_view);
 
     //  aligned.align = aligned_t::left | aligned_t::top;
     //  aligned(obtained_left_top_view);
@@ -311,10 +311,10 @@ int main()
 
     BOOST_TEST(gil::equal_pixels(gil::view(vec1_img), gil::view(vec2_img)));
 
-    BOOST_TEST(gil::equal_pixels(gil::view(expected_center_middle_img), gil::view(original_image)));
-    BOOST_TEST(gil::equal_pixels(gil::view(expected_left_top_img), gil::view(original_image)));
+    // BOOST_TEST(gil::equal_pixels(gil::view(expected_center_middle_img), gil::view(original_image)));
+    // BOOST_TEST(gil::equal_pixels(gil::view(expected_left_top_img), gil::view(original_image)));
 
-    // BOOST_TEST(gil::equal_pixels(obtained_center_middle_view, gil::view(expected_center_middle_img)));
+    BOOST_TEST(gil::equal_pixels(obtained_center_middle_view, gil::view(expected_center_middle_img)));
     // BOOST_TEST(gil::equal_pixels(obtained_left_top_view, gil::view(expected_left_top_img)));
 
     return boost::report_errors();
