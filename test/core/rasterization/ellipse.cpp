@@ -64,9 +64,9 @@ void test_connectivity(std::vector<std::array<std::ptrdiff_t, 2>> points)
 // can be constructed with simple reflection, they tend to be correct if first quadrant is verified.
 int main()
 {
-    for(int a = 1;a < 101; ++a)
+    for(unsigned int a = 1;a < 101; ++a)
     {
-        for(int b = 1;b < 101; ++b)
+        for(unsigned int b = 1;b < 101; ++b)
         {
             auto rasterizer = gil::midpoint_elliptical_rasterizer{};
             std::vector<std::array<std::ptrdiff_t, 2>> points = 
