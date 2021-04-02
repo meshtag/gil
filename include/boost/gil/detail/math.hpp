@@ -165,7 +165,6 @@ inline void kernel_vector_fill(std::vector<std::vector<float>>& kernel, kernel_t
 /// order is obtained.
 /// \param order - Indicates order of derivative whose kernel vector is to be returned.
 /// \param type - Indicates the type of kernel vector which is to be returned.
-template<typename T = int>
 inline auto kernel_convolve(unsigned int order, kernel_type type) -> std::vector<float>
 {
     std::vector<float> convolved_kernel_flatten;
