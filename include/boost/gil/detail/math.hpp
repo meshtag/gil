@@ -228,7 +228,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> order, unsigned int siz
             kernel_y_origin, kernel_y_origin, y_size, y_size));
     }
 
-    if (size_desired != x_size + y_size && size_desired != -1)
+    if (size_desired != x_size + y_size - 1 && size_desired != -1)
     {
         unsigned int smooth_count = (size - (x_size + y_size)) / 2;
         unsigned int smoothing_kernel_size = 3 + 2 * (smooth_count - 1), prev_size = 3;
@@ -281,6 +281,11 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> order, unsigned int siz
             size, size), view(resultant_smoothing_kernel),
             view(intermediate_img));
         copy_pixels(view(intermediate_img), view(resultant_kernel));
+    }
+
+    if (order[1] & 1)
+    {
+        view_multiplies_scalar<gray32f_pixel_t>(view(resultant_kernel), -1, view(resultant_kernel));
     }
 
     std::vector<float> ans;
