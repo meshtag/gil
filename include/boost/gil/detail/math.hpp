@@ -254,6 +254,10 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> order, unsigned int siz
                 smoothing_kernel_size / 2 - prev_size / 2,
                 smoothing_kernel_size / 2 - prev_size / 2,
                 prev_size, prev_size), view(intermediate_img));
+            copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
+                smoothing_kernel_size / 2 - intermediate_img_size / 2,
+                smoothing_kernel_size / 2 - intermediate_img_size / 2,
+                intermediate_img_size, intermediate_img_size));
             prev_size = intermediate_img_size;
         }
 
@@ -272,15 +276,11 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> order, unsigned int siz
                 intermediate_img_size, intermediate_img_size));
         }
 
-        unsigned int intermediate_img_size = smoothing_kernel_size + x_size + y_size - 1;
-        gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
-
+        gray32f_image_t intermediate_img(size, size);
         view_convolve(subimage_view(view(resultant_kernel), 0, 0,
-            intermediate_img_size, intermediate_img_size), view(resultant_smoothing_kernel),
+            size, size), view(resultant_smoothing_kernel),
             view(intermediate_img));
-
-        copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel), 0, 0,
-            intermediate_img_size, intermediate_img_size));
+        copy_pixels(view(intermediate_img), view(resultant_kernel));
     }
 
     std::vector<float> ans;
