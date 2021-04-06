@@ -18,7 +18,7 @@ namespace gil = boost::gil;
 
 void test_dx_sobel_kernel()
 {
-    auto const kernel = gil::generate_dx_sobel(1);
+    auto const kernel = gil::generate_sobel_kernel({1, 0});
     BOOST_TEST_ALL_EQ(kernel.begin(), kernel.end(), gil::detail::dx_sobel.begin(), gil::detail::dx_sobel.end());
 }
 
@@ -30,7 +30,7 @@ void test_dx_scharr_kernel()
 
 void test_dy_sobel_kernel()
 {
-    auto const kernel = gil::generate_dy_sobel(1);
+    auto const kernel = gil::generate_sobel_kernel({0, 1});
     BOOST_TEST_ALL_EQ(kernel.begin(), kernel.end(), gil::detail::dy_sobel.begin(), gil::detail::dy_sobel.end());
 }
 
@@ -47,15 +47,16 @@ int main()
     test_dy_sobel_kernel();
     test_dy_scharr_kernel();
 
-    auto ans = boost::gil::detail::get_sobel_kernel({0, 4}, 9);
-    for (int i = 0; i < 9; ++i)
+    auto ans = gil::generate_sobel_kernel({0, 2}, 5);
+    
+    for (int i = 0; i < 5; ++i)
     {
-        for (int j = 0; j < 9; ++j)
+        for (int j = 0; j < 5; ++j)
         {
-            std::cout << ans[9 * i + j] << " ";
+            std::cout << ans[5 * i + j] << " ";
         }
         std::cout << "\n";
     }
-
+    
     return boost::report_errors();
 }

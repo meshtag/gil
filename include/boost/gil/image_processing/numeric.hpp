@@ -16,6 +16,7 @@
 // fixes ambigious call to std::abs, https://stackoverflow.com/a/30084734/4593721
 #include <cstdlib>
 #include <cmath>
+#include <vector>
 
 namespace boost { namespace gil {
 
@@ -151,34 +152,71 @@ inline detail::kernel_2d<T, Allocator> generate_gaussian_kernel(std::size_t side
     return detail::kernel_2d<T, Allocator>(values.begin(), values.size(), middle, middle);
 }
 
-/// \brief Generates Sobel operator in horizontal direction
-/// \ingroup ImageProcessingMath
-///
-/// Generates a kernel which will represent Sobel operator in
-/// horizontal direction of specified degree (no need to convolve multiple times
-/// to obtain the desired degree).
-/// https://www.researchgate.net/publication/239398674_An_Isotropic_3_3_Image_Gradient_Operator
 template <typename T = float, typename Allocator = std::allocator<T>>
-inline detail::kernel_2d<T, Allocator> generate_dx_sobel(unsigned int degree = 1)
+inline detail::kernel_2d<T, Allocator> generate_sobel_kernel(
+    std::array<unsigned int, 2>order, unsigned int size = -1)
 {
-    switch (degree)
+    // Implement basic checks, dx + dy > 0, size check.
+    if (order[0] == 0 && order[1] == 0 && size == -1)
     {
-        case 0:
-        {
-            return detail::get_identity_kernel<T, Allocator>();
-        }
-        case 1:
+        return detail::get_identity_kernel<T, Allocator>();
+    }
+    else if (order[1] == 0 && order[0] < 3 && size == -1)
+    {
+        if (order[0] == 1)
         {
             detail::kernel_2d<T, Allocator> result(3, 1, 1);
             std::copy(detail::dx_sobel.begin(), detail::dx_sobel.end(), result.begin());
             return result;
         }
-        default:
-            throw std::logic_error("not supported yet");
+        else  // order[0] == 2
+        {
+            detail::kernel_2d<T, Allocator> result(5, 2, 2);
+            std::copy(detail::dx_sobel_2_5.begin(), detail::dx_sobel_2_5.end(), result.begin());
+            return result;
+        }
     }
-
-    //to not upset compiler
-    throw std::runtime_error("unreachable statement");
+    else if(order[0] == 0 && order[1] < 3 && size == -1)
+    {
+        if (order[1] == 1)
+        {
+            detail::kernel_2d<T, Allocator> result(3, 1, 1);
+            std::copy(detail::dy_sobel.begin(), detail::dy_sobel.end(), result.begin());
+            return result;
+        }
+        else // order[1] == 2
+        {
+            detail::kernel_2d<T, Allocator> result(5, 2, 2);
+            std::copy(detail::dy_sobel_2_5.begin(), detail::dy_sobel_2_5.end(), result.begin());
+            return result;
+        }
+    }
+    else 
+    {
+        if (size == -1)
+        {
+            unsigned int size_equivalent = order[0] + order[1];
+            detail::kernel_2d<T, Allocator> result(2 * size_equivalent + 1,
+                size_equivalent, size_equivalent);
+            std::vector<float> kernel_vector = detail::get_sobel_kernel({order[0], order[1]});
+            std::copy(kernel_vector.begin(), kernel_vector.end(), result.begin());
+            return result;
+        }
+        else 
+        {
+            unsigned int minimum_size = 2 * (order[0] + order[1]) + 1;
+            if(size < minimum_size)
+            {
+                throw std::invalid_argument("Size must be greater than or equal to "
+                    "1 + 2 * (order_in_x_direction + order_in_y_direction)\n");
+            }
+            detail::kernel_2d<T, Allocator> result(size, size / 2, size / 2);
+            std::vector<float> kernel_vector = detail::get_sobel_kernel({order[0], order[1]},
+                size);
+            std::copy(kernel_vector.begin(), kernel_vector.end(), result.begin());
+            return result;
+        }
+    }
 }
 
 /// \brief Generate Scharr operator in horizontal direction
@@ -201,36 +239,6 @@ inline detail::kernel_2d<T, Allocator> generate_dx_scharr(unsigned int degree = 
         {
             detail::kernel_2d<T, Allocator> result(3, 1, 1);
             std::copy(detail::dx_scharr.begin(), detail::dx_scharr.end(), result.begin());
-            return result;
-        }
-        default:
-            throw std::logic_error("not supported yet");
-    }
-
-    //to not upset compiler
-    throw std::runtime_error("unreachable statement");
-}
-
-/// \brief Generates Sobel operator in vertical direction
-/// \ingroup ImageProcessingMath
-///
-/// Generates a kernel which will represent Sobel operator in
-/// vertical direction of specified degree (no need to convolve multiple times
-/// to obtain the desired degree).
-/// https://www.researchgate.net/publication/239398674_An_Isotropic_3_3_Image_Gradient_Operator
-template <typename T = float, typename Allocator = std::allocator<T>>
-inline detail::kernel_2d<T, Allocator> generate_dy_sobel(unsigned int degree = 1)
-{
-    switch (degree)
-    {
-        case 0:
-        {
-            return detail::get_identity_kernel<T, Allocator>();
-        }
-        case 1:
-        {
-            detail::kernel_2d<T, Allocator> result(3, 1, 1);
-            std::copy(detail::dy_sobel.begin(), detail::dy_sobel.end(), result.begin());
             return result;
         }
         default:
@@ -288,8 +296,8 @@ inline void compute_hessian_entries(
     OutputView dxdy,
     OutputView ddyy)
 {
-    auto sobel_x = generate_dx_sobel();
-    auto sobel_y = generate_dy_sobel();
+    auto sobel_x = generate_sobel_kernel({1, 0});
+    auto sobel_y = generate_sobel_kernel({0, 1});
     detail::convolve_2d(dx, sobel_x, ddxx);
     detail::convolve_2d(dx, sobel_y, dxdy);
     detail::convolve_2d(dy, sobel_y, ddyy);
