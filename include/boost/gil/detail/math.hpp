@@ -228,9 +228,10 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> order, unsigned int siz
             kernel_y_origin, kernel_y_origin, y_size, y_size));
     }
 
-    if (size_desired != x_size + y_size - 1 && size_desired != -1)
+    unsigned int smooth_count = (size - (x_size + y_size - 1)) / 2;
+
+    if ( size_desired != -1 && smooth_count)
     {
-        unsigned int smooth_count = (size - (x_size + y_size)) / 2;
         unsigned int smoothing_kernel_size = 3 + 2 * (smooth_count - 1), prev_size = 3;
         gray32f_image_t smoothing_kernel(3, 3);
         gray32f_image_t resultant_smoothing_kernel(smoothing_kernel_size, smoothing_kernel_size);
