@@ -230,7 +230,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> order, unsigned int siz
 
     unsigned int smooth_count = (size - (x_size + y_size - 1)) / 2;
 
-    if ( size_desired != -1 && smooth_count)
+    if (size_desired != -1 && smooth_count)
     {
         unsigned int smoothing_kernel_size = 3 + 2 * (smooth_count - 1), prev_size = 3;
         gray32f_image_t smoothing_kernel(3, 3);

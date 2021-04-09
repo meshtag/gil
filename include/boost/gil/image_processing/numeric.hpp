@@ -211,8 +211,7 @@ inline detail::kernel_2d<T, Allocator> generate_sobel_kernel(
                     "1 + 2 * (order_in_x_direction + order_in_y_direction)\n");
             }
             detail::kernel_2d<T, Allocator> result(size, size / 2, size / 2);
-            std::vector<float> kernel_vector = detail::get_sobel_kernel({order[0], order[1]},
-                size);
+            std::vector<float> kernel_vector = detail::get_sobel_kernel({order[0], order[1]}, size);
             std::copy(kernel_vector.begin(), kernel_vector.end(), result.begin());
             return result;
         }
