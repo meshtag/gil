@@ -1,5 +1,6 @@
 //
 // Copyright 2019 Olzhas Zhumabek <anonymous.from.applecity@gmail.com>
+// Copyright 2021 Prathamesh Tagore <prathameshtagore@gmail.com>
 //
 // Use, modification and distribution are subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -29,16 +30,16 @@ enum class kernel_type
 static constexpr double pi = 3.14159265358979323846;
 
 static constexpr std::array<float, 9> dx_sobel = {{-1, 0, 1, -2, 0, 2, -1, 0, 1}};
-static std::vector<float> const dx_sobel_2_5 = {
+static constexpr std::array<float, 25> dx_sobel_2_5 = {
     1, 0, -2, 0, 1, 4, 0, -8, 0, 4, 6, 0, -12, 0, 6, 4, 0, -8, 0, 4, 1, 0, -2, 0, 1
 };
 static constexpr std::array<float, 9> dx_scharr = {{-1, 0, 1, -1, 0, 1, -1, 0, 1}};
 static constexpr std::array<float, 9> dy_sobel = {{1, 2, 1, 0, 0, 0, -1, -2, -1}};
-static std::vector<float> const dy_sobel_2_5 {
+static constexpr std::array<float, 25> dy_sobel_2_5 {
     1, 4, 6, 4, 1, 0, 0, 0, 0, 0, -2, -8, -12, -8, -2, 0, 0, 0, 0, 0, 1, 4, 6, 4, 1
 };
 static constexpr std::array<float, 9> dy_scharr = {{1, 1, 1, 0, 0, 0, -1, -1, -1}};
-std::vector<float> const smoothing_kernel_vector {1, 2, 1, 2, 4, 2, 1, 2, 1};
+static constexpr std::array<float, 9> smoothing_kernel_vector {1, 2, 1, 2, 4, 2, 1, 2, 1};
 
 template <typename T, typename Allocator>
 inline detail::kernel_2d<T, Allocator> get_identity_kernel()
@@ -82,7 +83,6 @@ inline void fill_kernel_view(gil::gray32f_view_t view, kernel_type type)
     }
 }
 
-// proper kernel in vector returned??
 inline auto gray32f_view_to_1d_vector(gil::gray32f_view_t view) -> std::vector<float>
 {
     std::vector<float> view_vector;
@@ -289,15 +289,15 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> order, unsigned int siz
         view_multiplies_scalar<gray32f_pixel_t>(view(resultant_kernel), -1, view(resultant_kernel));
     }
 
-    std::vector<float> ans;
+    std::vector<float> resultant_kernel_flatten;
     for (int i = 0; i < view(resultant_kernel).height(); ++i)
     {
         for (int j = 0; j < view(resultant_kernel).width(); ++j)
         {
-            ans.push_back(view(resultant_kernel)(j, i)[0]);
+            resultant_kernel_flatten.push_back(view(resultant_kernel)(j, i)[0]);
         }
     }
-    return ans;
+    return resultant_kernel_flatten;
 }
 
 }}} // namespace boost::gil::detail
