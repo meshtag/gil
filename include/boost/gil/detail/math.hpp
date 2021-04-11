@@ -13,9 +13,6 @@
 #include <boost/gil/extension/numeric/kernel.hpp>
 #include <array>
 #include <cmath>
-
-#include <iostream>
-
 #include <vector>
 
 namespace boost { namespace gil { namespace detail {
@@ -35,11 +32,11 @@ static constexpr std::array<float, 25> dx_sobel_2_5 = {
 };
 static constexpr std::array<float, 9> dx_scharr = {{-1, 0, 1, -1, 0, 1, -1, 0, 1}};
 static constexpr std::array<float, 9> dy_sobel = {{1, 2, 1, 0, 0, 0, -1, -2, -1}};
-static constexpr std::array<float, 25> dy_sobel_2_5 {
+static constexpr std::array<float, 25> dy_sobel_2_5 = {
     1, 4, 6, 4, 1, 0, 0, 0, 0, 0, -2, -8, -12, -8, -2, 0, 0, 0, 0, 0, 1, 4, 6, 4, 1
 };
 static constexpr std::array<float, 9> dy_scharr = {{1, 1, 1, 0, 0, 0, -1, -1, -1}};
-static constexpr std::array<float, 9> smoothing_kernel_vector {1, 2, 1, 2, 4, 2, 1, 2, 1};
+static constexpr std::array<float, 9> smoothing_kernel_vector = {1, 2, 1, 2, 4, 2, 1, 2, 1};
 
 template <typename T, typename Allocator>
 inline detail::kernel_2d<T, Allocator> get_identity_kernel()
@@ -105,11 +102,12 @@ inline void view_convolve(gil::gray32f_view_t view1, gil::gray32f_view_t view2,
     detail::convolve_2d(view1, kernel, dst_view);
 }
 
-inline auto get_sobel_kernel(std::array<unsigned int, 2> order, unsigned int size_desired = -1) 
-    -> std::vector<float>
+inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
+    unsigned int const size_desired = -1) -> std::vector<float>
 {
-    unsigned int x_size = order[0] ? 2 * order[0] + 1 : 0;
-    unsigned int y_size = order[1] ? 2 * order[1] + 1 : 0, size;
+    unsigned int const x_size = order[0] ? 2 * order[0] + 1 : 0;
+    unsigned int const y_size = order[1] ? 2 * order[1] + 1 : 0;
+    unsigned int size;
     if (order[0] && order[1] && size_desired == -1)
     {
         size = x_size + y_size - 1;
