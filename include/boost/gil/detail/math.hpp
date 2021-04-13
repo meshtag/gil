@@ -135,7 +135,7 @@ inline void view_convolve(gil::gray32f_view_t view1, gil::gray32f_view_t view2,
 /// \param size_desired - Optional argument which specifies the desired size of resultant Sobel 
 ///                       kernel.
 inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
-    unsigned int const size_desired = -1) -> std::vector<float>
+    int const size_desired = -1) -> std::vector<float>
 {
     unsigned int const x_size = order[0] ? 2 * order[0] + 1 : 0;
     unsigned int const y_size = order[1] ? 2 * order[1] + 1 : 0;
@@ -165,7 +165,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
     {
         double const x_repetition = static_cast<unsigned int>(std::log2(order[0] - 1));
         double const x_decrease = std::pow(2, x_repetition);
-        double convolve_count = x_decrease;
+        unsigned int convolve_count = static_cast<unsigned int>(x_decrease);
         unsigned int prev_size = 3;
 
         fill_kernel_view(view(kernel_x_1), kernel_type::sobel_dx);
@@ -173,7 +173,8 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
             size / 2 - 1, size / 2 - 1, 3, 3));
         for (unsigned int i = 0; i < x_repetition; ++i)
         {
-            unsigned int intermediate_img_size = prev_size + std::pow(2, i + 1);
+            unsigned int intermediate_img_size = prev_size + 
+                static_cast<unsigned int>(std::pow(2, i + 1));
             gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
             view_convolve(subimage_view(view(resultant_kernel),
                 size / 2 - intermediate_img_size / 2, size / 2 - intermediate_img_size / 2,
@@ -188,7 +189,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
         for (unsigned int i = 0; i < order[0] - x_decrease; ++i)
         {
             ++convolve_count;
-            unsigned int intermediate_img_size = 2 * convolve_count + 1;
+            unsigned int intermediate_img_size = static_cast<unsigned int>(2 * convolve_count) + 1;
             gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
             view_convolve(subimage_view(view(resultant_kernel),
                 size / 2 - convolve_count, size / 2 - convolve_count,
@@ -203,7 +204,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
     {
         double const y_repetition = static_cast<unsigned int>(std::log2(order[1] - 1));
         double const y_decrease = std::pow(2, y_repetition);
-        double convolve_count = y_decrease;
+        unsigned int convolve_count = static_cast<unsigned int>(y_decrease);
         unsigned int prev_size = 3;
 
         fill_kernel_view(view(kernel_y_1), kernel_type::sobel_dy);
@@ -211,7 +212,8 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
             y_size / 2 - 1, y_size / 2 - 1, 3, 3));
         for (unsigned int i = 0; i < y_repetition; ++i)
         {
-            unsigned int intermediate_img_size = prev_size + std::pow(2, i + 1);
+            unsigned int intermediate_img_size = prev_size + 
+                static_cast<unsigned int>(std::pow(2, i + 1));
             gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
             view_convolve(subimage_view(view(resultant_kernel_y),
                 y_size / 2 - intermediate_img_size / 2, y_size / 2 - intermediate_img_size / 2,
@@ -266,14 +268,14 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
         gray32f_image_t resultant_smoothing_kernel(smoothing_kernel_size, smoothing_kernel_size);
         double const smooth_repetition = static_cast<unsigned int>(std::log(smooth_count));
         double const smooth_decrease = std::pow(2, smooth_repetition);
-        double convolve_count = smooth_decrease;
+        unsigned int convolve_count = static_cast<unsigned int>(smooth_decrease);
 
         fill_kernel_view(view(smoothing_kernel), kernel_type::smoothing);
         copy_pixels(view(smoothing_kernel), subimage_view(view(resultant_smoothing_kernel), 
             smoothing_kernel_size / 2 - 1, smoothing_kernel_size / 2 - 1, 3, 3));
         for (unsigned int i = 0; i < smooth_repetition; ++i)
         {
-            unsigned int intermediate_img_size = 3 + std::pow(2, i + 1);
+            unsigned int intermediate_img_size = 3 + static_cast<unsigned int>(std::pow(2, i + 1));
             gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
             view_convolve(subimage_view(view(resultant_smoothing_kernel),
                 smoothing_kernel_size / 2 - intermediate_img_size / 2,
@@ -325,7 +327,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
     }
     return resultant_kernel_flatten;
 }
-
+ 
 }}} // namespace boost::gil::detail
 
 #endif

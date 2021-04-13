@@ -786,18 +786,6 @@ int main()
     test_dy_sobel_kernel();
     test_dy_scharr_kernel();
     test_dx_dy_sobel_kernel();
-
-    // auto ans = gil::generate_sobel_kernel({1, 3});
-    // int size = 0;
-    // std::cout << ans[152] << "  " << dx_dy_sobel_4_4_19[152] << "\n";
-    // for (int i = 0; i < 9; ++i)
-    // {
-    //     for (int j = 0; j < 9; ++j)
-    //     {
-    //         std::cout << ans[9 * i + j] << " ";
-    //     }
-    //     std::cout << "\n";
-    // }
     
     return boost::report_errors();
 }
