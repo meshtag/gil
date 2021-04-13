@@ -153,11 +153,16 @@ inline detail::kernel_2d<T, Allocator> generate_gaussian_kernel(std::size_t side
     return detail::kernel_2d<T, Allocator>(values.begin(), values.size(), middle, middle);
 }
 
+// Refer this link(https://stackoverflow.com/a/10032882/14958679) for obtaining an overview of the 
+// concept applied for generating higher order Sobel kernels.
+
+/// \brief Function used for generating Sobel kernels of desired size having user specified
+///        horizontal and vertical order of derivative.
+/// \ingroup ImageProcessingMath
 template <typename T = float, typename Allocator = std::allocator<T>>
 inline detail::kernel_2d<T, Allocator> generate_sobel_kernel(
     std::array<unsigned int, 2>order, unsigned int size = -1)
 {
-    // Implement basic checks, dx + dy > 0, size check.
     if (order[0] == 0 && order[1] == 0 && size == -1)
     {
         return detail::get_identity_kernel<T, Allocator>();
@@ -177,7 +182,7 @@ inline detail::kernel_2d<T, Allocator> generate_sobel_kernel(
             return result;
         }
     }
-    else if(order[0] == 0 && order[1] < 3 && size == -1)
+    else if (order[0] == 0 && order[1] < 3 && size == -1)
     {
         if (order[1] == 1)
         {
@@ -206,7 +211,7 @@ inline detail::kernel_2d<T, Allocator> generate_sobel_kernel(
         else 
         {
             unsigned int minimum_size = 2 * (order[0] + order[1]) + 1;
-            if(size < minimum_size)
+            if (size < minimum_size)
             {
                 throw std::invalid_argument("Size must be greater than or equal to "
                     "1 + 2 * (order_in_x_direction + order_in_y_direction)\n");
