@@ -267,9 +267,9 @@ int main()
     {{1,1,1}}
 };
 
-    gil::rgb8_image_t original_image(2, 2), expected_center_middle_img(2, 2);
-    gil::rgb8_image_t expected_left_top_img(2, 2), obtained_center_middle_img(2, 2);
-    gil::rgb8_image_t obtained_left_top_img(2, 2);
+    gil::rgb8_image_t original_image(1, 1), expected_center_middle_img(1, 1);
+    gil::rgb8_image_t expected_left_top_img(1, 1), obtained_center_middle_img(1, 1);
+    gil::rgb8_image_t obtained_left_top_img(1, 1);
 
     gil::rgb8_view_t obtained_center_middle_view = gil::view(obtained_center_middle_img);
     gil::rgb8_view_t obtained_left_top_view = gil::view(obtained_left_top_img);
