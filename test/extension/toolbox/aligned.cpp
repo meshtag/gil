@@ -29,6 +29,19 @@ void pixel_fill_rgb(std::vector<std::vector<std::vector<int>>>& vec, gil::rgb8_i
     }
 }
 
+void view_to_vector(gil::rgb8_view_t view, std::vector<int>& vec)
+{
+    for (std::ptrdiff_t row = 0; row < view.height(); ++row)
+    {
+        for (std::ptrdiff_t col = 0; col < view.width(); ++col)
+        {
+            vec.push_back(view(col, row)[0]);
+            vec.push_back(view(col, row)[1]);
+            vec.push_back(view(col, row)[2]);
+        }
+    }
+}
+
 int main()
 {
     std::vector<std::vector<std::vector<int>>> original_img_vector {
@@ -288,8 +301,15 @@ int main()
     aligned.align = aligned_t::left | aligned_t::top;
     aligned(obtained_left_top_view);
 
-    BOOST_TEST(gil::equal_pixels(obtained_center_middle_view, gil::view(expected_center_middle_img)));
-    BOOST_TEST(gil::equal_pixels(obtained_left_top_view, gil::view(expected_left_top_img)));
+    // BOOST_TEST(gil::equal_pixels(obtained_center_middle_view, gil::view(expected_center_middle_img)));
+    // BOOST_TEST(gil::equal_pixels(obtained_left_top_view, gil::view(expected_left_top_img)));
 
+    std::vector<int> vec_ocm, vec_ecm;
+
+    view_to_vector(obtained_center_middle_view, vec_ocm);
+    view_to_vector(gil::view(expected_center_middle_img), vec_ecm);
+
+    BOOST_TEST_ALL_EQ(vec_ocm.begin(), vec_ocm.end(), vec_ecm.begin(), vec_ecm.end());
+    std::cout << "here\n";
     return boost::report_errors();
 }
