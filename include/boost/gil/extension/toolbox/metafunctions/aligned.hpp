@@ -21,18 +21,18 @@ struct aligned
     // constructor with respect to the view passed through overloaded '()' operator.
     enum
     {
-        left = (0x1 << 0),
-        center = (0x1 << 1),
-        right = (0x1 << 2),
-        top = (0x1 << 3),
-        middle = (0x1 << 5),
-        bottom = (0x1 << 7),
+        left = static_cast<unsigned int>(0x1 << 0),
+        center = static_cast<unsigned int>(0x1 << 1),
+        right = static_cast<unsigned int>(0x1 << 2),
+        top = static_cast<unsigned int>(0x1 << 3),
+        middle = static_cast<unsigned int>(0x1 << 5),
+        bottom = static_cast<unsigned int>(0x1 << 7),
     };
 
     view_t& v2;
     int align;
-    aligned(view_t v2, int align = static_cast<unsigned int>(center) |
-        static_cast<unsigned int>(middle))
+    aligned(view_t v2, int align = center |
+        middle)
         : v2(v2)
         , align(align)
     {
@@ -53,18 +53,18 @@ struct aligned
                 " struct constructor");
         }
 
-        // std::cout << "type   " << typeid((int)center).name() << "\n";
+        std::cout << "type   " << typeid((int)center).name() << "\n";
 
         std::ptrdiff_t x = 0;
-        if (align & static_cast<unsigned int>(center))
+        if (align & center)
             x = (view.width() - w) / 2;
-        else if (align & static_cast<unsigned int>(right))
+        else if (align & right)
             x = view.width() - w;
 
         std::ptrdiff_t y = 0;
-        if (align & static_cast<unsigned int>(middle))
+        if (align & middle)
             y = (view.height() - h) / 2;
-        else if (align & static_cast<unsigned int>(bottom))
+        else if (align & bottom)
             y = view.height() - h;
 
         view_t v3 = subimage_view(view, x, y, w, h);
