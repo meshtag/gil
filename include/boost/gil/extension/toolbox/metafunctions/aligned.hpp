@@ -7,6 +7,8 @@
 
 #include <boost/gil.hpp>
 
+#include <iostream>
+
 namespace boost { namespace gil {
 
 /// \brief Aligns the image view passed through struct constructor in a specific direction
@@ -29,7 +31,8 @@ struct aligned
 
     view_t& v2;
     int align;
-    aligned(view_t v2, int align = center | middle)
+    aligned(view_t v2, int align = static_cast<unsigned int>(center) |
+        static_cast<unsigned int>(middle))
         : v2(v2)
         , align(align)
     {
@@ -50,16 +53,18 @@ struct aligned
                 " struct constructor");
         }
 
+        // std::cout << "type   " << typeid((int)center).name() << "\n";
+
         std::ptrdiff_t x = 0;
-        if (align & center)
+        if (align & static_cast<unsigned int>(center))
             x = (view.width() - w) / 2;
-        else if (align & right)
+        else if (align & static_cast<unsigned int>(right))
             x = view.width() - w;
 
         std::ptrdiff_t y = 0;
-        if (align & middle)
+        if (align & static_cast<unsigned int>(middle))
             y = (view.height() - h) / 2;
-        else if (align & bottom)
+        else if (align & static_cast<unsigned int>(bottom))
             y = view.height() - h;
 
         view_t v3 = subimage_view(view, x, y, w, h);

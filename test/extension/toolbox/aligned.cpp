@@ -321,6 +321,12 @@ int main()
     view_to_vector(obtained_left_top_view, vec_otl);
     view_to_vector(gil::view(expected_left_top_img), vec_etl);
 
+    for(auto a : vec_ocm)
+        std::cout << a << "\n";
+    std::cout << "\n\n\n\n\n";
+    for (auto b : vec_ecm)
+        std::cout << b << "\n";
+
     BOOST_TEST_ALL_EQ(vec_ocm.begin(), vec_ocm.end(), vec_ecm.begin(), vec_ecm.end());
     BOOST_TEST_ALL_EQ(vec_otl.begin(), vec_otl.end(), vec_etl.begin(), vec_etl.end());
     
