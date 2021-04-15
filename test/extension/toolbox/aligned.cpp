@@ -193,7 +193,7 @@ int main()
     // {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255},
     // {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255},
     // {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}}
-    {{255,255,255}}
+    {{1,1,1}}
 };
 
     std::vector<std::vector<std::vector<int>>> expected_left_top_vector {
@@ -304,12 +304,27 @@ int main()
     // BOOST_TEST(gil::equal_pixels(obtained_center_middle_view, gil::view(expected_center_middle_img)));
     // BOOST_TEST(gil::equal_pixels(obtained_left_top_view, gil::view(expected_left_top_img)));
 
-    std::vector<int> vec_ocm, vec_ecm;
+    // for (std::ptrdiff_t row = 0; row < obtained_center_middle_view.height(); ++row)
+    // {
+    //     for (std::ptrdiff_t col = 0; col < obtained_center_middle_view.width(); ++col)
+    //     {
+    //         std::cout << (unsigned int)nth_channel_view(obtained_center_middle_view, 0)(col, row)[0] << "\n";
+    //         std::cout << nth_channel_view(obtained_center_middle_view, 1)(col, row)[0] << "\n";
+    //         std::cout << nth_channel_view(obtained_center_middle_view, 2)(col, row)[0] << "\n";
+    //     }
+    // }
+
+    std::vector<int> vec_ocm, vec_ecm, vec_otl, vec_etl;
 
     view_to_vector(obtained_center_middle_view, vec_ocm);
     view_to_vector(gil::view(expected_center_middle_img), vec_ecm);
+    view_to_vector(obtained_left_top_view, vec_otl);
+    view_to_vector(gil::view(expected_left_top_img), vec_etl);
 
     BOOST_TEST_ALL_EQ(vec_ocm.begin(), vec_ocm.end(), vec_ecm.begin(), vec_ecm.end());
+    BOOST_TEST_ALL_EQ(vec_otl.begin(), vec_otl.end(), vec_etl.begin(), vec_etl.end());
+    
+
     std::cout << "here\n";
     return boost::report_errors();
 }
