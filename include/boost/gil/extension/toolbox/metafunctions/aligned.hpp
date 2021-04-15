@@ -14,7 +14,7 @@ namespace boost { namespace gil {
 /// \brief Aligns the image view passed through struct constructor in a specific direction
 /// inside the image view passed through the overloaded '()' operator. The direction of 
 /// alignment is specified by constructor parameters.
-template <typename view_t>
+template <typename View>
 struct aligned
 {
     // Following enum variables will be used for specifying alignment of view passed through
@@ -29,16 +29,16 @@ struct aligned
         bottom = static_cast<unsigned int>(0x1 << 7),
     };
 
-    view_t& v2;
+    View v2;
     int align;
-    aligned(view_t v2, int align = center |
+    aligned(View v2, int align = center |
         middle)
         : v2(v2)
         , align(align)
     {
     }
 
-    void operator()(view_t& view)
+    void operator()(View view)
     {
         using namespace boost::gil;
 
@@ -67,7 +67,7 @@ struct aligned
         else if (align & bottom)
             y = view.height() - h;
 
-        view_t v3 = subimage_view(view, x, y, w, h);
+        View v3 = subimage_view(view, x, y, w, h);
         copy_pixels(v2, v3);
     }
 }; // shrink
