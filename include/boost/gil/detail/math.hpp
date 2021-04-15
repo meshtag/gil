@@ -58,7 +58,7 @@ inline detail::kernel_2d<T, Allocator> get_identity_kernel()
 /// \param view - Gil image view of type gray32f_view_t which will be filled with a kernel specified 
 ///               by variable "type".
 /// \param type - Enum variable specifying the kernel which is to be filled inside "view".
-inline void fill_kernel_view(gil::gray32f_view_t view, kernel_type type)
+inline void fill_kernel(gil::gray32f_view_t view, kernel_type type)
 {
     if (type == kernel_type::sobel_dx)
     {
@@ -66,7 +66,7 @@ inline void fill_kernel_view(gil::gray32f_view_t view, kernel_type type)
         {
             for (std::ptrdiff_t col = 0; col < 3; ++col)
             {
-                view(col, row) = dx_sobel[3 * row + col];
+                view(col, row)[0] = dx_sobel[3 * row + col];
             }
         }
     }
@@ -76,7 +76,7 @@ inline void fill_kernel_view(gil::gray32f_view_t view, kernel_type type)
         {
             for (std::ptrdiff_t col = 0; col < 3; ++col)
             {
-                view(col, row) = dy_sobel[3 * row + col];
+                view(col, row)[0] = dy_sobel[3 * row + col];
             }
         }
     }
@@ -86,32 +86,32 @@ inline void fill_kernel_view(gil::gray32f_view_t view, kernel_type type)
         {
             for (std::ptrdiff_t col = 0; col < 3; ++col)
             {
-                view(col, row) = smoothing_kernel_vector[3 * row + col];
+                view(col, row)[0] = smoothing_kernel_vector[3 * row + col];
             }
         }
     }
 }
 
 /// \brief Converts a gray32f_view_t into a one dimensional kernel in a specific manner as required 
-///        for creating a kernel from that vector.
+///        for creating the desired kernel from that vector.
 /// \ingroup Kernel_generation
 /// \param view - Gil image view of type gray32f_view_t which will be converted into a one 
 ///               dimensional kernel vector for creating a kernel from it.
-inline auto gray32f_view_to_1d_vector(gil::gray32f_view_t view) -> std::vector<float>
+inline auto gray32f_view_to_1d_kernel_vector(gil::gray32f_view_t view) -> std::vector<float>
 {
     std::vector<float> view_vector;
-    for (std::ptrdiff_t row = 0; row < static_cast<std::ptrdiff_t>(view.height()); ++row)
+    for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(view.height()); ++i)
     {
-        for (std::ptrdiff_t col = 0; col < static_cast<std::ptrdiff_t>(view.width()); ++col)
+        for (std::ptrdiff_t j = 0; j < static_cast<std::ptrdiff_t>(view.width()); ++j)
         {
-            view_vector.push_back(view(row, col)[0]);
+            view_vector.push_back(view(i, j)[0]);
         }
     }
     return view_vector;
 }
 
 /// \brief Performs convolution between a gray32f_view_t view and a kernel created from another 
-///        gray32f_view_t view using the function "gray32f_view_to_1d_vector()".
+///        gray32f_view_t view using the function "gray32f_view_to_1d_kernel_vector()".
 /// \ingroup Kernel_generation
 /// \param view1 - Gil image view of type gray32f_view_t which will be used as first argument for 
 ///                convolution operation.
@@ -123,7 +123,7 @@ inline auto gray32f_view_to_1d_vector(gil::gray32f_view_t view) -> std::vector<f
 inline void view_convolve(gil::gray32f_view_t view1, gil::gray32f_view_t view2, 
     gil::gray32f_view_t dst_view)
 {
-    std::vector<float> kernel_vector = gray32f_view_to_1d_vector(view2);
+    std::vector<float> kernel_vector = gray32f_view_to_1d_kernel_vector(view2);
     detail::kernel_2d<float> kernel(kernel_vector.begin(), kernel_vector.size(),
         view2.height() / 2, view2.width() / 2);
     detail::convolve_2d(view1, kernel, dst_view);
@@ -131,7 +131,8 @@ inline void view_convolve(gil::gray32f_view_t view1, gil::gray32f_view_t view2,
 
 /// \brief Function used for obtaining Sobel kernels.
 /// \ingroup Kernel_generation
-/// \param order - Contains desired order of Sobel derivative in x and y direction respectively.
+/// \param order - Contains desired order of derivative for Sobel kernel in x and y direction 
+///                respectively.
 /// \param size_desired - Optional argument which specifies the desired size of resultant Sobel 
 ///                       kernel.
 inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
@@ -168,7 +169,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
         unsigned int convolve_count = static_cast<unsigned int>(x_decrease);
         unsigned int prev_size = 3;
 
-        fill_kernel_view(view(kernel_x_1), kernel_type::sobel_dx);
+        fill_kernel(view(kernel_x_1), kernel_type::sobel_dx);
         copy_pixels(view(kernel_x_1), subimage_view(view(resultant_kernel),
             size / 2 - 1, size / 2 - 1, 3, 3));
         for (unsigned int i = 0; i < x_repetition; ++i)
@@ -207,7 +208,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
         unsigned int convolve_count = static_cast<unsigned int>(y_decrease);
         unsigned int prev_size = 3;
 
-        fill_kernel_view(view(kernel_y_1), kernel_type::sobel_dy);
+        fill_kernel(view(kernel_y_1), kernel_type::sobel_dy);
         copy_pixels(view(kernel_y_1), subimage_view(view(resultant_kernel_y),
             y_size / 2 - 1, y_size / 2 - 1, 3, 3));
         for (unsigned int i = 0; i < y_repetition; ++i)
@@ -270,7 +271,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
         double const smooth_decrease = std::pow(2, smooth_repetition);
         unsigned int convolve_count = static_cast<unsigned int>(smooth_decrease);
 
-        fill_kernel_view(view(smoothing_kernel), kernel_type::smoothing);
+        fill_kernel(view(smoothing_kernel), kernel_type::smoothing);
         copy_pixels(view(smoothing_kernel), subimage_view(view(resultant_smoothing_kernel), 
             smoothing_kernel_size / 2 - 1, smoothing_kernel_size / 2 - 1, 3, 3));
         for (unsigned int i = 0; i < smooth_repetition; ++i)

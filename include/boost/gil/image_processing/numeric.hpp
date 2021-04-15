@@ -211,9 +211,9 @@ inline detail::kernel_2d<T, Allocator> generate_sobel_kernel(
         else 
         {
             unsigned int minimum_size = 2 * (order[0] + order[1]) + 1;
-            if (size < minimum_size)
+            if (size < minimum_size || size & 1 == 0)
             {
-                throw std::invalid_argument("Size must be greater than or equal to "
+                throw std::invalid_argument("Size must be odd and greater than or equal to "
                     "1 + 2 * (order_in_x_direction + order_in_y_direction)\n");
             }
             detail::kernel_2d<T, Allocator> result(size, size / 2, size / 2);
