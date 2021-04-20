@@ -24,6 +24,12 @@ enum class kernel_type
     smoothing
 };
 
+enum class flatten_orientation
+{
+    left_to_right,
+    top_to_bottom
+};
+
 static constexpr double pi = 3.14159265358979323846;
 
 static constexpr std::array<float, 9> dx_sobel = {{-1, 0, 1, -2, 0, 2, -1, 0, 1}};
@@ -51,7 +57,7 @@ inline detail::kernel_2d<T, Allocator> get_identity_kernel()
 }
 
 /// \defgroup Kernel_generation
-/// \brief A set of helper functions used for generating kernels.
+/// \brief Set of helper functions used for generating kernels.
 
 /// \brief Fills a gray32f_view_t view with a kernel specified by argument "type".
 /// \ingroup Kernel_generation
@@ -92,19 +98,35 @@ inline void fill_kernel(gil::gray32f_view_t view, kernel_type type)
     }
 }
 
-/// \brief Converts a gray32f_view_t into a one dimensional kernel in a specific manner as required 
-///        for creating the desired kernel from that vector.
+/// \brief Converts a gray32f_view_t into a one dimensional kernel in a specific manner as specified 
+///        by variable "orient".
 /// \ingroup Kernel_generation
 /// \param view - Gil image view of type gray32f_view_t which will be converted into a one 
 ///               dimensional kernel vector for creating a kernel from it.
-inline auto gray32f_view_to_1d_kernel_vector(gil::gray32f_view_t view) -> std::vector<float>
+/// \param orient - Variable specifying the manner of traversal(top to bootom or left to right) used
+///                 for traversing "view" for filling the resultant vector.
+inline auto gray32f_view_to_1d_kernel_vector(gil::gray32f_view_t view, 
+    flatten_orientation orient = flatten_orientation::left_to_right) -> std::vector<float>
 {
     std::vector<float> view_vector;
-    for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(view.height()); ++i)
+    if (orient == flatten_orientation::left_to_right)
     {
-        for (std::ptrdiff_t j = 0; j < static_cast<std::ptrdiff_t>(view.width()); ++j)
+        for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(view.width()); ++i)
         {
-            view_vector.push_back(view(i, j)[0]);
+            for (std::ptrdiff_t j = 0; j < static_cast<std::ptrdiff_t>(view.height()); ++j)
+            {
+                view_vector.push_back(view(i, j)[0]);
+            }
+        }
+    }
+    else if (orient == flatten_orientation::top_to_bottom)
+    {
+        for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(view.height()); ++i)
+        {
+            for (std::ptrdiff_t j = 0; j < static_cast<std::ptrdiff_t>(view.width()); ++j)
+            {
+                view_vector.push_back(view(j, i)[0]);
+            }
         }
     }
     return view_vector;
@@ -135,7 +157,7 @@ inline void view_convolve(gil::gray32f_view_t view1, gil::gray32f_view_t view2,
 ///                respectively.
 /// \param size_desired - Optional argument which specifies the desired size of resultant Sobel 
 ///                       kernel.
-inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
+inline auto get_sobel_kernel(std::array<unsigned int, 2> const order, 
     int const size_desired = -1) -> std::vector<float>
 {
     unsigned int const x_size = order[0] ? 2 * order[0] + 1 : 0;
@@ -158,7 +180,7 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
     {
         throw std::length_error("Kernels with size greater than 19x19 are not yet supported\n");
     }
-
+    // variable clarification
     gil::gray32f_image_t kernel_x_1(3, 3), kernel_y_1(3, 3), resultant_kernel(size, size);
     gil::gray32f_image_t resultant_kernel_y(y_size, y_size);
 
@@ -318,17 +340,10 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
         view_multiplies_scalar<gray32f_pixel_t>(view(resultant_kernel), -1, view(resultant_kernel));
     }
 
-    std::vector<float> resultant_kernel_flatten;
-    for (int i = 0; i < view(resultant_kernel).height(); ++i)
-    {
-        for (int j = 0; j < view(resultant_kernel).width(); ++j)
-        {
-            resultant_kernel_flatten.push_back(view(resultant_kernel)(j, i)[0]);
-        }
-    }
+    std::vector<float> resultant_kernel_flatten = 
+        gray32f_view_to_1d_kernel_vector(view(resultant_kernel), flatten_orientation::top_to_bottom);
     return resultant_kernel_flatten;
 }
- 
 }}} // namespace boost::gil::detail
 
 #endif

@@ -156,7 +156,7 @@ inline detail::kernel_2d<T, Allocator> generate_gaussian_kernel(std::size_t side
 // Refer this link(https://stackoverflow.com/a/10032882/14958679) for obtaining an overview of the 
 // concept applied for generating higher order Sobel kernels.
 
-/// \brief Function used for generating Sobel kernels of desired size having user specified
+/// \brief Function used for generating Sobel kernels of desired size having user specified 
 ///        horizontal and vertical order of derivative.
 /// \ingroup ImageProcessingMath
 template <typename T = float, typename Allocator = std::allocator<T>>
