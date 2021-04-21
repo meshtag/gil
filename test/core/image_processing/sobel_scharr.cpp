@@ -16,7 +16,7 @@
 #include "test_utility_output_stream.hpp"
 
 namespace gil = boost::gil;
-
+// variable specification
 std::vector<float> dx_sobel_6_15 {
     1.0000e+00,  2.0000e+00, -5.0000e+00, -1.2000e+01,  9.0000e+00,  3.0000e+01,
    -5.0000e+00, -4.0000e+01, -5.0000e+00,  3.0000e+01,  9.0000e+00, -1.2000e+01,
