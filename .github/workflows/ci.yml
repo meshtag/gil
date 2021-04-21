@@ -1,6 +1,12 @@
 name: CI
 
-on: [push]
+on: 
+  pull_request:
+  push:
+    branches:
+      - master
+      - develop
+      - feature/**
 
 env:
   LIBRARY: gil

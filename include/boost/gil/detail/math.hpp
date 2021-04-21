@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 //
 // Copyright 2019 Olzhas Zhumabek <anonymous.from.applecity@gmail.com>
 // Copyright 2021 Prathamesh Tagore <prathameshtagore@gmail.com>
@@ -349,4 +347,3 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
 }}} // namespace boost::gil::detail
 
 #endif
->>>>>>> backup
