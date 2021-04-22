@@ -18,10 +18,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - toolset: gcc-6
-          #   cxxstd: "11,14,1z"
-          #   os: ubuntu-16.04
-          #   install: g++-6
+          - toolset: gcc-6
+            cxxstd: "11,14,1z"
+            os: ubuntu-16.04
+            install: g++-6
           # - toolset: gcc-7
           #   cxxstd: "11,14,17"
           #   os: ubuntu-18.04
