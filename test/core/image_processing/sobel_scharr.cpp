@@ -710,20 +710,20 @@ std::vector<float> dx_dy_sobel_5_1_19 {
 void test_dx_sobel_kernel()
 {
     auto const kernel = gil::generate_sobel_kernel({1, 0});
-    //BOOST_TEST_ALL_EQ(kernel.begin(), kernel.end(), gil::detail::dx_sobel.begin(),
-    //    gil::detail::dx_sobel.end());
+    BOOST_TEST_ALL_EQ(kernel.begin(), kernel.end(), gil::detail::dx_sobel.begin(),
+        gil::detail::dx_sobel.end());
 
     auto const kernel_x_6_15 = gil::generate_sobel_kernel({6, 0}, 15);
-    //BOOST_TEST_ALL_EQ(kernel_x_6_15.begin(), kernel_x_6_15.end(),
-      //  dx_sobel_6_15.begin(), dx_sobel_6_15.end());
+    BOOST_TEST_ALL_EQ(kernel_x_6_15.begin(), kernel_x_6_15.end(),
+        dx_sobel_6_15.begin(), dx_sobel_6_15.end());
 
     auto const kernel_x_7_15 = gil::generate_sobel_kernel({7, 0});
-    //BOOST_TEST_ALL_EQ(kernel_x_7_15.begin(), kernel_x_7_15.end(),
-      //  dx_sobel_7_15.begin(), dx_sobel_7_15.end());
+    BOOST_TEST_ALL_EQ(kernel_x_7_15.begin(), kernel_x_7_15.end(),
+        dx_sobel_7_15.begin(), dx_sobel_7_15.end());
 
     auto const kernel_9_19 = gil::generate_sobel_kernel({9, 0});
-    //BOOST_TEST_ALL_EQ(kernel_9_19.begin(), kernel_9_19.end(),
-      //  dx_sobel_9_19.begin(), dx_sobel_9_19.end());
+    BOOST_TEST_ALL_EQ(kernel_9_19.begin(), kernel_9_19.end(),
+        dx_sobel_9_19.begin(), dx_sobel_9_19.end());
 }
 
 void test_dx_scharr_kernel()
