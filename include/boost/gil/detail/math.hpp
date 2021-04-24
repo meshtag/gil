@@ -104,10 +104,9 @@ inline void fill_kernel(gil::gray32f_view_t view, kernel_type type)
 ///               dimensional kernel vector for creating a kernel from it.
 /// \param orient - Variable specifying the manner of traversal(top to bootom or left to right) used
 ///                 for traversing "view" for filling the resultant vector.
-inline auto gray32f_view_to_1d_kernel_vector(gil::gray32f_view_t view, 
-    flatten_orientation orient = flatten_orientation::left_to_right) -> std::vector<float>
+inline void gray32f_view_to_1d_kernel_vector(gil::gray32f_view_t view, 
+    std::vector<float>& view_vector, flatten_orientation orient = flatten_orientation::left_to_right)
 {
-    std::vector<float> view_vector;
     if (orient == flatten_orientation::left_to_right)
     {
         for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(view.width()); ++i)
@@ -128,7 +127,6 @@ inline auto gray32f_view_to_1d_kernel_vector(gil::gray32f_view_t view,
             }
         }
     }
-    return view_vector;
 }
 
 /// \brief Performs convolution between a gray32f_view_t view and a kernel created from another 
@@ -144,7 +142,8 @@ inline auto gray32f_view_to_1d_kernel_vector(gil::gray32f_view_t view,
 inline void view_convolve(gil::gray32f_view_t view1, gil::gray32f_view_t view2, 
     gil::gray32f_view_t dst_view)
 {
-    std::vector<float> kernel_vector = gray32f_view_to_1d_kernel_vector(view2);
+    std::vector<float> kernel_vector;
+    gray32f_view_to_1d_kernel_vector(view2, kernel_vector);
     detail::kernel_2d<float> kernel(kernel_vector.begin(), kernel_vector.size(),
         view2.height() / 2, view2.width() / 2);
     detail::convolve_2d(view1, kernel, dst_view);
@@ -174,8 +173,8 @@ inline void view_convolve(gil::gray32f_view_t view1, gil::gray32f_view_t view2,
 ///                respectively.
 /// \param size_desired - Optional argument which specifies the desired size of resultant Sobel 
 ///                       kernel.
-inline auto get_sobel_kernel(std::array<unsigned int, 2> const order, 
-    int const size_desired = -1) -> std::vector<float>
+inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
+    std::vector<float>& resultant_kernel_flatten, int const size_desired = -1)
 {
     unsigned int const x_size = order[0] ? 2 * order[0] + 1 : 0;
     unsigned int const y_size = order[1] ? 2 * order[1] + 1 : 0;
@@ -356,9 +355,8 @@ inline auto get_sobel_kernel(std::array<unsigned int, 2> const order,
         view_multiplies_scalar<gray32f_pixel_t>(view(resultant_kernel), -1, view(resultant_kernel));
     }
 
-    std::vector<float> resultant_kernel_flatten = 
-        gray32f_view_to_1d_kernel_vector(view(resultant_kernel), flatten_orientation::top_to_bottom);
-    return resultant_kernel_flatten;
+    gray32f_view_to_1d_kernel_vector(view(resultant_kernel), resultant_kernel_flatten,
+        flatten_orientation::top_to_bottom);
 }
 }}} // namespace boost::gil::detail
 

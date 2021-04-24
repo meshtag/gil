@@ -790,6 +790,7 @@ int main()
 {
     #include <iostream>
 
+    std::cout << "0 \n";
     test_dx_sobel_kernel();
     std::cout << "1 \n";
     test_dx_scharr_kernel();
