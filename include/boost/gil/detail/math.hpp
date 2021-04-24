@@ -284,9 +284,9 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
         unsigned int xy_combine_origin = size / 2 - x_size / 2 - y_size / 2;
         gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
 
-        view_convolve(subimage_view(view(resultant_kernel), xy_combine_origin, xy_combine_origin,
-            intermediate_img_size, intermediate_img_size), view(resultant_kernel_y),
-            view(intermediate_img));
+        // view_convolve(subimage_view(view(resultant_kernel), xy_combine_origin, xy_combine_origin,
+        //     intermediate_img_size, intermediate_img_size), view(resultant_kernel_y),
+        //     view(intermediate_img));
         copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
             xy_combine_origin, xy_combine_origin, intermediate_img_size, intermediate_img_size));
     }
