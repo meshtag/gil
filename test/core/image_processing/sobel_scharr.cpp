@@ -795,12 +795,12 @@ int main()
     std::cout << "1 \n";
     test_dx_scharr_kernel();
     std::cout << "2 \n";
-    // test_dy_sobel_kernel();
-    // std::cout << "3 \n";
+    test_dy_sobel_kernel();
+    std::cout << "3 \n";
     test_dy_scharr_kernel();
     std::cout << "4 \n";
-    // test_dx_dy_sobel_kernel();
-    // std::cout << "5 \n";
+    test_dx_dy_sobel_kernel();
+    std::cout << "5 \n";
     
     return boost::report_errors();
 }
