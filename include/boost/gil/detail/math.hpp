@@ -209,21 +209,21 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
         fill_kernel(view(kernel_x_1), kernel_type::sobel_dx);
         copy_pixels(view(kernel_x_1), subimage_view(view(resultant_kernel),
             size / 2 - 1, size / 2 - 1, 3, 3));
-        // for (unsigned int i = 0; i < x_repetition; ++i)
-        // {
-        //     unsigned int intermediate_img_size = prev_size + 
-        //         static_cast<unsigned int>(std::pow(2, i + 1));
-        //     gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
-        //     view_convolve(subimage_view(view(resultant_kernel),
-        //         size / 2 - intermediate_img_size / 2, size / 2 - intermediate_img_size / 2,
-        //         intermediate_img_size, intermediate_img_size), subimage_view(
-        //         view(resultant_kernel), size / 2 - prev_size / 2, size / 2 - prev_size / 2,
-        //         prev_size, prev_size), view(intermediate_img));
-        //     copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
-        //         size / 2 - intermediate_img_size / 2, size / 2 - intermediate_img_size / 2,
-        //         intermediate_img_size, intermediate_img_size));
-        //     prev_size = intermediate_img_size;
-        // }
+        for (unsigned int i = 0; i < x_repetition; ++i)
+        {
+            unsigned int intermediate_img_size = prev_size + 
+                static_cast<unsigned int>(std::pow(2, i + 1));
+            gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
+            view_convolve(subimage_view(view(resultant_kernel),
+                size / 2 - intermediate_img_size / 2, size / 2 - intermediate_img_size / 2,
+                intermediate_img_size, intermediate_img_size), subimage_view(
+                view(resultant_kernel), size / 2 - prev_size / 2, size / 2 - prev_size / 2,
+                prev_size, prev_size), view(intermediate_img));
+            copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
+                size / 2 - intermediate_img_size / 2, size / 2 - intermediate_img_size / 2,
+                intermediate_img_size, intermediate_img_size));
+            prev_size = intermediate_img_size;
+        }
         // for (unsigned int i = 0; i < order[0] - x_decrease; ++i)
         // {
         //     ++convolve_count;
