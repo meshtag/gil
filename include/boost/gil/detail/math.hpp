@@ -224,19 +224,19 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
                 intermediate_img_size, intermediate_img_size));
             prev_size = intermediate_img_size;
         }
-        // for (unsigned int i = 0; i < order[0] - x_decrease; ++i)
-        // {
-        //     ++convolve_count;
-        //     unsigned int intermediate_img_size = static_cast<unsigned int>(2 * convolve_count) + 1;
-        //     gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
-        //     view_convolve(subimage_view(view(resultant_kernel),
-        //         size / 2 - convolve_count, size / 2 - convolve_count,
-        //         intermediate_img_size, intermediate_img_size),
-        //         view(kernel_x_1), view(intermediate_img));
-        //     copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
-        //         size / 2 - convolve_count, size / 2 - convolve_count,
-        //         intermediate_img_size, intermediate_img_size));
-        // }
+        for (unsigned int i = 0; i < order[0] - x_decrease; ++i)
+        {
+            ++convolve_count;
+            unsigned int intermediate_img_size = 2 * convolve_count + 1;
+            gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
+            view_convolve(subimage_view(view(resultant_kernel),
+                size / 2 - convolve_count, size / 2 - convolve_count,
+                intermediate_img_size, intermediate_img_size),
+                view(kernel_x_1), view(intermediate_img));
+            copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
+                size / 2 - convolve_count, size / 2 - convolve_count,
+                intermediate_img_size, intermediate_img_size));
+        }
     }
     // if (order[1])
     // {
