@@ -287,8 +287,8 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
         // view_convolve(subimage_view(view(resultant_kernel), xy_combine_origin, xy_combine_origin,
         //     intermediate_img_size, intermediate_img_size), view(resultant_kernel_y),
         //     view(intermediate_img));
-        copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
-            xy_combine_origin, xy_combine_origin, intermediate_img_size, intermediate_img_size));
+        // copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
+        //     xy_combine_origin, xy_combine_origin, intermediate_img_size, intermediate_img_size));
     }
     else if (order[1])
     {
