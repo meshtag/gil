@@ -278,7 +278,7 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
         }
     }
 
-    if(order[0] && order[1])
+    if (order[0] && order[1])
     {
         unsigned int intermediate_img_size = x_size + y_size - 1;
         unsigned int xy_combine_origin = size / 2 - x_size / 2 - y_size / 2;
@@ -343,11 +343,11 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
                 smoothing_kernel_size / 2 - convolve_count,
                 intermediate_img_size, intermediate_img_size));
         }
-        gray32f_image_t intermediate_img(size, size);
-        view_convolve(subimage_view(view(resultant_kernel), 0, 0,
-            size, size), view(resultant_smoothing_kernel),
-            view(intermediate_img));
-        copy_pixels(view(intermediate_img), view(resultant_kernel));
+        // gray32f_image_t intermediate_img(size, size);
+        // view_convolve(subimage_view(view(resultant_kernel), 0, 0,
+        //     size, size), view(resultant_smoothing_kernel),
+        //     view(intermediate_img));
+        // copy_pixels(view(intermediate_img), view(resultant_kernel));
     }
 
     if (order[1] & 1)
