@@ -280,15 +280,15 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
 
     if (order[0] && order[1])
     {
-        // unsigned int intermediate_img_size = x_size + y_size - 1;
-        // unsigned int xy_combine_origin = size / 2 - x_size / 2 - y_size / 2;
-        // gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
+        unsigned int intermediate_img_size = x_size + y_size - 1;
+        unsigned int xy_combine_origin = size / 2 - x_size / 2 - y_size / 2;
+        gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
 
-        // view_convolve(subimage_view(view(resultant_kernel), xy_combine_origin, xy_combine_origin,
-        //     intermediate_img_size, intermediate_img_size), view(resultant_kernel_y),
-        //     view(intermediate_img));
-        // copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
-        //     xy_combine_origin, xy_combine_origin, intermediate_img_size, intermediate_img_size));
+        view_convolve(subimage_view(view(resultant_kernel), xy_combine_origin, xy_combine_origin,
+            intermediate_img_size, intermediate_img_size), view(resultant_kernel_y),
+            view(intermediate_img));
+        copy_pixels(view(intermediate_img), subimage_view(view(resultant_kernel),
+            xy_combine_origin, xy_combine_origin, intermediate_img_size, intermediate_img_size));
     }
     else if (order[1])
     {
@@ -304,7 +304,7 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
         unsigned int smoothing_kernel_size = 3 + 2 * (smooth_count - 1), prev_size = 3;
         gray32f_image_t smoothing_kernel(3, 3);
         gray32f_image_t resultant_smoothing_kernel(smoothing_kernel_size, smoothing_kernel_size);
-        double const smooth_repetition = static_cast<unsigned int>(std::log(smooth_count));
+        double const smooth_repetition = static_cast<unsigned int>(std::log2(smooth_count));
         double const smooth_decrease = std::pow(2, smooth_repetition);
         unsigned int convolve_count = static_cast<unsigned int>(smooth_decrease);
 
@@ -313,7 +313,8 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
             smoothing_kernel_size / 2 - 1, smoothing_kernel_size / 2 - 1, 3, 3));
         for (unsigned int i = 0; i < smooth_repetition; ++i)
         {
-            unsigned int intermediate_img_size = 3 + static_cast<unsigned int>(std::pow(2, i + 1));
+            unsigned int intermediate_img_size = prev_size + 
+                static_cast<unsigned int>(std::pow(2, i + 1));
             gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
             view_convolve(subimage_view(view(resultant_smoothing_kernel),
                 smoothing_kernel_size / 2 - intermediate_img_size / 2,

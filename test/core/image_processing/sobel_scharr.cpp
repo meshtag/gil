@@ -20,10 +20,10 @@ namespace gil = boost::gil;
 // Convention used for naming vectors containing kernels : 
 // 1. d$_sobel_#_% : 
 //    Kernel vector in direction specified by '$' containing '#'th order Sobel derivative having 
-//    its dimensions as '% x %'.
+//    its dimensions as '%' x '%'.
 // 2. dx_dy_sobel_#1_#2_% : 
 //    Kernel vector obtained from '#1'th order and '#2'th order Sobel derivatives in x and y
-//    directions respectively having its dimensions as '% x %'.
+//    directions respectively having its dimensions as '%' x '%'.
 std::vector<float> dx_sobel_6_15 {
     1.0000e+00,  2.0000e+00, -5.0000e+00, -1.2000e+01,  9.0000e+00,  3.0000e+01,
    -5.0000e+00, -4.0000e+01, -5.0000e+00,  3.0000e+01,  9.0000e+00, -1.2000e+01,
@@ -770,37 +770,29 @@ void test_dy_scharr_kernel()
 void test_dx_dy_sobel_kernel()
 {
     auto const kernel_x_y_3_3_19 = gil::generate_sobel_kernel({3, 3}, 19);
-    //BOOST_TEST_ALL_EQ(kernel_x_y_3_3_19.begin(), kernel_x_y_3_3_19.end(),
-      //  dx_dy_sobel_3_3_19.begin(), dx_dy_sobel_3_3_19.end());
+    BOOST_TEST_ALL_EQ(kernel_x_y_3_3_19.begin(), kernel_x_y_3_3_19.end(),
+        dx_dy_sobel_3_3_19.begin(), dx_dy_sobel_3_3_19.end());
 
     auto const kernel_x_y_4_4_19 = gil::generate_sobel_kernel({4, 4}, 19);
-    //BOOST_TEST_ALL_EQ(kernel_x_y_4_4_19.begin(), kernel_x_y_4_4_19.end(), 
-      //  dx_dy_sobel_4_4_19.begin(), dx_dy_sobel_4_4_19.end());
+    BOOST_TEST_ALL_EQ(kernel_x_y_4_4_19.begin(), kernel_x_y_4_4_19.end(), 
+        dx_dy_sobel_4_4_19.begin(), dx_dy_sobel_4_4_19.end());
 
     auto const kernel_x_y_1_7_19 = gil::generate_sobel_kernel({1, 7}, 19);
-    //BOOST_TEST_ALL_EQ(kernel_x_y_1_7_19.begin(), kernel_x_y_1_7_19.end(),
-      //  dx_dy_sobel_1_7_19.begin(), dx_dy_sobel_1_7_19.end());
+    BOOST_TEST_ALL_EQ(kernel_x_y_1_7_19.begin(), kernel_x_y_1_7_19.end(),
+        dx_dy_sobel_1_7_19.begin(), dx_dy_sobel_1_7_19.end());
 
     auto const kernel_x_y_5_1_19 = gil::generate_sobel_kernel({5, 1}, 19);
-    //BOOST_TEST_ALL_EQ(kernel_x_y_5_1_19.begin(), kernel_x_y_5_1_19.end(),
-      //  dx_dy_sobel_5_1_19.begin(), dx_dy_sobel_5_1_19.end());
+    BOOST_TEST_ALL_EQ(kernel_x_y_5_1_19.begin(), kernel_x_y_5_1_19.end(),
+        dx_dy_sobel_5_1_19.begin(), dx_dy_sobel_5_1_19.end());
 }
 
 int main()
 {
-    #include <iostream>
-
-    std::cout << "0 \n";
     test_dx_sobel_kernel();
-    std::cout << "1 \n";
     test_dx_scharr_kernel();
-    std::cout << "2 \n";
     test_dy_sobel_kernel();
-    std::cout << "3 \n";
     test_dy_scharr_kernel();
-    std::cout << "4 \n";
     test_dx_dy_sobel_kernel();
-    std::cout << "5 \n";
     
     return boost::report_errors();
 }
