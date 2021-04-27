@@ -753,11 +753,11 @@ void test_dy_sobel_kernel()
 
     auto const kernel_y_4_15 = gil::generate_sobel_kernel({0, 4}, 15);
     //BOOST_TEST_ALL_EQ(kernel_y_4_15.begin(), kernel_y_4_15.end(),
-      //  dy_sobel_4_15.begin(), dy_sobel_4_15.end());
+      // dy_sobel_4_15.begin(), dy_sobel_4_15.end());
 
     auto const kernel_y_5_15 = gil::generate_sobel_kernel({0, 5}, 15);
     //BOOST_TEST_ALL_EQ(kernel_y_5_15.begin(), kernel_y_5_15.end(),
-      //  dy_sobel_5_15.begin(), dy_sobel_5_15.end());
+      // dy_sobel_5_15.begin(), dy_sobel_5_15.end());
 }
 
 void test_dy_scharr_kernel()
