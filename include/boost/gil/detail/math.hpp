@@ -301,54 +301,54 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
 
     if (size_desired != -1 && smooth_count)
     {
-        unsigned int smoothing_kernel_size = 3 + 2 * (smooth_count - 1), prev_size = 3;
-        gray32f_image_t smoothing_kernel(3, 3);
-        gray32f_image_t resultant_smoothing_kernel(smoothing_kernel_size, smoothing_kernel_size);
-        double const smooth_repetition = static_cast<unsigned int>(std::log2(smooth_count - 1));
-        double const smooth_decrease = std::pow(2, smooth_repetition);
-        unsigned int convolve_count = static_cast<unsigned int>(smooth_decrease);
+    //     unsigned int smoothing_kernel_size = 3 + 2 * (smooth_count - 1), prev_size = 3;
+    //     gray32f_image_t smoothing_kernel(3, 3);
+    //     gray32f_image_t resultant_smoothing_kernel(smoothing_kernel_size, smoothing_kernel_size);
+    //     double const smooth_repetition = static_cast<unsigned int>(std::log2(smooth_count - 1));
+    //     double const smooth_decrease = std::pow(2, smooth_repetition);
+    //     unsigned int convolve_count = static_cast<unsigned int>(smooth_decrease);
 
-        fill_kernel(view(smoothing_kernel), kernel_type::smoothing);
-        copy_pixels(view(smoothing_kernel), subimage_view(view(resultant_smoothing_kernel), 
-            smoothing_kernel_size / 2 - 1, smoothing_kernel_size / 2 - 1, 3, 3));
-        for (unsigned int i = 0; i < smooth_repetition; ++i)
-        {
-            unsigned int intermediate_img_size = prev_size + 
-                static_cast<unsigned int>(std::pow(2, i + 1));
-            gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
-            view_convolve(subimage_view(view(resultant_smoothing_kernel),
-                smoothing_kernel_size / 2 - intermediate_img_size / 2,
-                smoothing_kernel_size / 2 - intermediate_img_size / 2,
-                intermediate_img_size, intermediate_img_size),
-                subimage_view(view(resultant_smoothing_kernel),
-                smoothing_kernel_size / 2 - prev_size / 2,
-                smoothing_kernel_size / 2 - prev_size / 2,
-                prev_size, prev_size), view(intermediate_img));
-            copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
-                smoothing_kernel_size / 2 - intermediate_img_size / 2,
-                smoothing_kernel_size / 2 - intermediate_img_size / 2,
-                intermediate_img_size, intermediate_img_size));
-            prev_size = intermediate_img_size;
-        }
-        for (unsigned int i = 0; i < smooth_count - smooth_decrease; ++i)
-        {
-            ++convolve_count;
-            unsigned int intermediate_img_size = 2 * convolve_count + 1;
-            gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
-            view_convolve(subimage_view(view(resultant_smoothing_kernel),
-                smoothing_kernel_size / 2 - convolve_count,
-                smoothing_kernel_size / 2 - convolve_count, intermediate_img_size,
-                intermediate_img_size), view(smoothing_kernel), view(intermediate_img));
-            copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
-                smoothing_kernel_size / 2 - convolve_count,
-                smoothing_kernel_size / 2 - convolve_count,
-                intermediate_img_size, intermediate_img_size));
-        }
-        gray32f_image_t intermediate_img(size, size);
-        view_convolve(subimage_view(view(resultant_kernel), 0, 0,
-            size, size), view(resultant_smoothing_kernel),
-            view(intermediate_img));
-        copy_pixels(view(intermediate_img), view(resultant_kernel));
+    //     fill_kernel(view(smoothing_kernel), kernel_type::smoothing);
+    //     copy_pixels(view(smoothing_kernel), subimage_view(view(resultant_smoothing_kernel), 
+    //         smoothing_kernel_size / 2 - 1, smoothing_kernel_size / 2 - 1, 3, 3));
+    //     for (unsigned int i = 0; i < smooth_repetition; ++i)
+    //     {
+    //         unsigned int intermediate_img_size = prev_size + 
+    //             static_cast<unsigned int>(std::pow(2, i + 1));
+    //         gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
+    //         view_convolve(subimage_view(view(resultant_smoothing_kernel),
+    //             smoothing_kernel_size / 2 - intermediate_img_size / 2,
+    //             smoothing_kernel_size / 2 - intermediate_img_size / 2,
+    //             intermediate_img_size, intermediate_img_size),
+    //             subimage_view(view(resultant_smoothing_kernel),
+    //             smoothing_kernel_size / 2 - prev_size / 2,
+    //             smoothing_kernel_size / 2 - prev_size / 2,
+    //             prev_size, prev_size), view(intermediate_img));
+    //         copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
+    //             smoothing_kernel_size / 2 - intermediate_img_size / 2,
+    //             smoothing_kernel_size / 2 - intermediate_img_size / 2,
+    //             intermediate_img_size, intermediate_img_size));
+    //         prev_size = intermediate_img_size;
+    //     }
+    //     for (unsigned int i = 0; i < smooth_count - smooth_decrease; ++i)
+    //     {
+    //         ++convolve_count;
+    //         unsigned int intermediate_img_size = 2 * convolve_count + 1;
+    //         gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
+    //         view_convolve(subimage_view(view(resultant_smoothing_kernel),
+    //             smoothing_kernel_size / 2 - convolve_count,
+    //             smoothing_kernel_size / 2 - convolve_count, intermediate_img_size,
+    //             intermediate_img_size), view(smoothing_kernel), view(intermediate_img));
+    //         copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
+    //             smoothing_kernel_size / 2 - convolve_count,
+    //             smoothing_kernel_size / 2 - convolve_count,
+    //             intermediate_img_size, intermediate_img_size));
+    //     }
+    //     gray32f_image_t intermediate_img(size, size);
+    //     view_convolve(subimage_view(view(resultant_kernel), 0, 0,
+    //         size, size), view(resultant_smoothing_kernel),
+    //         view(intermediate_img));
+    //     copy_pixels(view(intermediate_img), view(resultant_kernel));
     }
 
     if (order[1] & 1)
