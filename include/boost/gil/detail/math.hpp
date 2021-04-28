@@ -329,7 +329,7 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
             //     smoothing_kernel_size / 2 - intermediate_img_size / 2,
             //     intermediate_img_size, intermediate_img_size));
             prev_size = intermediate_img_size;
-        }
+        } 
         for (unsigned int i = 0; i < smooth_count - smooth_decrease; ++i)
         {
             // ++convolve_count;
