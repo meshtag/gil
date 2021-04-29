@@ -16,7 +16,7 @@
 #include <vector>
 
 namespace boost { namespace gil { namespace detail {
-
+ 
 enum class kernel_type
 {
     sobel_dx,
