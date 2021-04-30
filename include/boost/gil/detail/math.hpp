@@ -245,9 +245,9 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
         unsigned int convolve_count = static_cast<unsigned int>(y_decrease);
         unsigned int prev_size = 3;
 
-        fill_kernel(view(kernel_y_1), kernel_type::sobel_dy);
-        copy_pixels(view(kernel_y_1), subimage_view(view(resultant_kernel_y),
-            y_size / 2 - 1, y_size / 2 - 1, 3, 3));
+        // fill_kernel(view(kernel_y_1), kernel_type::sobel_dy);
+        // copy_pixels(view(kernel_y_1), subimage_view(view(resultant_kernel_y),
+        //     y_size / 2 - 1, y_size / 2 - 1, 3, 3));
         for (unsigned int i = 0; i < y_repetition; ++i)
         {
             // unsigned int intermediate_img_size = prev_size + 
