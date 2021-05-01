@@ -33,19 +33,19 @@ enum class flatten_orientation
 static constexpr double pi = 3.14159265358979323846;
 
 static constexpr std::array<float, 9> dx_sobel = {{-1, 0, 1, -2, 0, 2, -1, 0, 1}};
-static constexpr std::array<float, 25> dx_sobel_2_5 = {
-    1, 0, -2, 0, 1, 4, 0, -8, 0, 4, 6, 0, -12, 0, 6, 4, 0, -8, 0, 4, 1, 0, -2, 0, 1
+static const std::array<float, 25> dx_sobel_2_5 = {
+    {1, 0, -2, 0, 1, 4, 0, -8, 0, 4, 6, 0, -12, 0, 6, 4, 0, -8, 0, 4, 1, 0, -2, 0, 1}
 };
 // In variable name "dx_sobel_2_5", "2" indicates that the order of Sobel derivative in x-direction 
 // is 2 and "5" indicates that the dimension of kernel created from this array will be 5x5.
 // Analogous terminology is used for variable "dy_sobel_2_5".
 static constexpr std::array<float, 9> dx_scharr = {{-1, 0, 1, -1, 0, 1, -1, 0, 1}};
 static constexpr std::array<float, 9> dy_sobel = {{1, 2, 1, 0, 0, 0, -1, -2, -1}};
-static constexpr std::array<float, 25> dy_sobel_2_5 = {
-    1, 4, 6, 4, 1, 0, 0, 0, 0, 0, -2, -8, -12, -8, -2, 0, 0, 0, 0, 0, 1, 4, 6, 4, 1
+static const std::array<float, 25> dy_sobel_2_5 = {
+    {1, 4, 6, 4, 1, 0, 0, 0, 0, 0, -2, -8, -12, -8, -2, 0, 0, 0, 0, 0, 1, 4, 6, 4, 1}
 };
 static constexpr std::array<float, 9> dy_scharr = {{1, 1, 1, 0, 0, 0, -1, -1, -1}};
-static constexpr std::array<float, 9> smoothing_kernel_vector = {1, 2, 1, 2, 4, 2, 1, 2, 1};
+static const std::array<float, 9> smoothing_kernel_vector = {{1, 2, 1, 2, 4, 2, 1, 2, 1}};
 
 template <typename T, typename Allocator>
 inline detail::kernel_2d<T, Allocator> get_identity_kernel()
