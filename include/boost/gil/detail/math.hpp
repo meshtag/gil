@@ -332,17 +332,17 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
         } 
         for (unsigned int i = 0; i < smooth_count - smooth_decrease; ++i)
         {
-            // ++convolve_count;
-            // unsigned int intermediate_img_size = 2 * convolve_count + 1;
-            // gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
-            // view_convolve(subimage_view(view(resultant_smoothing_kernel),
-            //     smoothing_kernel_size / 2 - convolve_count,
-            //     smoothing_kernel_size / 2 - convolve_count, intermediate_img_size,
-            //     intermediate_img_size), view(smoothing_kernel), view(intermediate_img));
-            // copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
-            //     smoothing_kernel_size / 2 - convolve_count,
-            //     smoothing_kernel_size / 2 - convolve_count,
-            //     intermediate_img_size, intermediate_img_size));
+            ++convolve_count;
+            unsigned int intermediate_img_size = 2 * convolve_count + 1;
+            gil::gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
+            view_convolve(subimage_view(view(resultant_smoothing_kernel),
+                smoothing_kernel_size / 2 - convolve_count,
+                smoothing_kernel_size / 2 - convolve_count, intermediate_img_size,
+                intermediate_img_size), view(smoothing_kernel), view(intermediate_img));
+            copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
+                smoothing_kernel_size / 2 - convolve_count,
+                smoothing_kernel_size / 2 - convolve_count,
+                intermediate_img_size, intermediate_img_size));
         }
         gray32f_image_t intermediate_img(size, size);
         view_convolve(subimage_view(view(resultant_kernel), 0, 0,
