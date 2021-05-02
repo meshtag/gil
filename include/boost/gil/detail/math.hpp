@@ -323,10 +323,10 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
             //     smoothing_kernel_size / 2 - prev_size / 2,
             //     smoothing_kernel_size / 2 - prev_size / 2,
             //     prev_size, prev_size), view(intermediate_img));
-            // copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
-            //     smoothing_kernel_size / 2 - intermediate_img_size / 2,
-            //     smoothing_kernel_size / 2 - intermediate_img_size / 2,
-            //     intermediate_img_size, intermediate_img_size));
+            copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
+                smoothing_kernel_size / 2 - intermediate_img_size / 2,
+                smoothing_kernel_size / 2 - intermediate_img_size / 2,
+                intermediate_img_size, intermediate_img_size));
             prev_size = intermediate_img_size;
         } 
         for (unsigned int i = 0; i < smooth_count - smooth_decrease; ++i)
