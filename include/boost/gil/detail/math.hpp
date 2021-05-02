@@ -315,14 +315,14 @@ inline void get_sobel_kernel(std::array<unsigned int, 2> const order,
         {
             unsigned int intermediate_img_size = 2 * prev_size - 1;
             gray32f_image_t intermediate_img(intermediate_img_size, intermediate_img_size);
-            // view_convolve(subimage_view(view(resultant_smoothing_kernel),
-            //     smoothing_kernel_size / 2 - intermediate_img_size / 2,
-            //     smoothing_kernel_size / 2 - intermediate_img_size / 2,
-            //     intermediate_img_size, intermediate_img_size),
-            //     subimage_view(view(resultant_smoothing_kernel),
-            //     smoothing_kernel_size / 2 - prev_size / 2,
-            //     smoothing_kernel_size / 2 - prev_size / 2,
-            //     prev_size, prev_size), view(intermediate_img));
+            view_convolve(subimage_view(view(resultant_smoothing_kernel),
+                smoothing_kernel_size / 2 - intermediate_img_size / 2,
+                smoothing_kernel_size / 2 - intermediate_img_size / 2,
+                intermediate_img_size, intermediate_img_size),
+                subimage_view(view(resultant_smoothing_kernel),
+                smoothing_kernel_size / 2 - prev_size / 2,
+                smoothing_kernel_size / 2 - prev_size / 2,
+                prev_size, prev_size), view(intermediate_img));
             copy_pixels(view(intermediate_img), subimage_view(view(resultant_smoothing_kernel),
                 smoothing_kernel_size / 2 - intermediate_img_size / 2,
                 smoothing_kernel_size / 2 - intermediate_img_size / 2,
