@@ -32,7 +32,8 @@ namespace boost { namespace gil {
 namespace detail {
 
 /// \brief Compute the cross-correlation of 1D kernel with the rows of an image
-/// \tparam PixelAccum - TODO
+/// \tparam PixelAccum - Specifies tha data type which will be used for creating buffer container 
+/// utilized for holding source image pixels after applying appropriate boundary manipulations.
 /// \tparam SrcView - Specifies the type of gil view of source image which is to be row correlated
 /// with the kernel.
 /// \tparam Kernel - Specifies the type of 1D kernel which will be row correlated with source image.
@@ -190,9 +191,10 @@ struct correlator_k
 
 /// \ingroup ImageAlgorithms
 /// \brief Correlate 1D variable-size kernel along the rows of image
-/// \tparam PixelAccum TODO
+/// \tparam PixelAccum Specifies tha data type which will be used for creating buffer container 
+/// utilized for holding source image pixels after applying appropriate boundary manipulations.
 /// \tparam SrcView Models ImageViewConcept
-/// \tparam Kernel TODO
+/// \tparam Kernel Specifies the type of 1D kernel which will be row correlated with source image.
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
 BOOST_FORCEINLINE
@@ -208,9 +210,10 @@ void correlate_rows(
 
 /// \ingroup ImageAlgorithms
 /// \brief Correlate 1D variable-size kernel along the columns of image
-/// \tparam PixelAccum TODO
+/// \tparam PixelAccum Specifies tha data type which will be used for creating buffer container 
+/// utilized for holding source image pixels after applying appropriate boundary manipulations.
 /// \tparam SrcView Models ImageViewConcept
-/// \tparam Kernel TODO
+/// \tparam Kernel Specifies the type of 1D kernel which will be column correlated with source image.
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
 BOOST_FORCEINLINE
@@ -226,9 +229,10 @@ void correlate_cols(
 
 /// \ingroup ImageAlgorithms
 /// \brief Convolve 1D variable-size kernel along the rows of image
-/// \tparam PixelAccum TODO
+/// \tparam PixelAccum Specifies tha data type which will be used for creating buffer container 
+/// utilized for holding source image pixels after applying appropriate boundary manipulations.
 /// \tparam SrcView Models ImageViewConcept
-/// \tparam Kernel TODO
+/// \tparam Kernel Specifies the type of 1D kernel which will be row convoluted with source image.
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
 BOOST_FORCEINLINE
@@ -243,9 +247,10 @@ void convolve_rows(
 
 /// \ingroup ImageAlgorithms
 /// \brief Convolve 1D variable-size kernel along the columns of image
-/// \tparam PixelAccum TODO
+/// \tparam PixelAccum Specifies tha data type which will be used for creating buffer container 
+/// utilized for holding source image pixels after applying appropriate boundary manipulations.
 /// \tparam SrcView Models ImageViewConcept
-/// \tparam Kernel TODO
+/// \tparam Kernel Specifies the type of 1D kernel which will be column convoluted with source image.
 /// \tparam DstView Models MutableImageViewConcept
 template <typename PixelAccum, typename SrcView, typename Kernel, typename DstView>
 BOOST_FORCEINLINE
@@ -261,7 +266,8 @@ void convolve_cols(
 
 /// \ingroup ImageAlgorithms
 /// \brief Correlate 1D fixed-size kernel along the rows of image
-/// \tparam PixelAccum TODO
+/// \tparam PixelAccum Specifies tha data type which will be used for creating buffer container 
+/// utilized for holding source image pixels after applying appropriate boundary manipulations.
 /// \tparam SrcView Models ImageViewConcept
 /// \tparam Kernel TODO
 /// \tparam DstView Models MutableImageViewConcept
