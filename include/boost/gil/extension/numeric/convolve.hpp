@@ -33,14 +33,17 @@ namespace detail {
 
 /// \brief Compute the cross-correlation of 1D kernel with the rows of an image
 /// \tparam PixelAccum - TODO
-/// \tparam SrcView Models ImageViewConcept
-/// \tparam Kernel - TODO
-/// \tparam DstView Models MutableImageViewConcept
+/// \tparam SrcView - Specifies the type of gil view of source image which is to be row correlated
+/// with the kernel.
+/// \tparam Kernel - Specifies the type of 1D kernel which will be row correlated with source image.
+/// \tparam DstView -  Specifies the type of gil view which will store the result of row correlation 
+/// between source image and kernel.
 /// \tparam Correlator - TODO
 /// \param src_view
-/// \param kernel - TODO
-/// \param dst_view Destination where new computed values of pixels are assigned to
-/// \param option - TODO
+/// \param kernel - 1D kernel which will be correlated with source image.
+/// \param dst_view - Gil view which will store the result of row correlation between "src_view" and 
+/// "kernel".
+/// \param option - Specifies the manner in which boundary pixels of "dst_view" should be computed.
 /// \param correlator - TODO
 template
 <
@@ -100,9 +103,11 @@ void correlate_rows_impl(
                 it_dst += kernel.left_size();
                 correlator(&buffer.front(), &buffer.front() + width + 1 - kernel.size(),
                            kernel.begin(), it_dst);
-                it_dst += width + 1 - kernel.size();
                 if (option == boundary_option::output_zero)
+                {
+                    it_dst += width + 1 - kernel.size();
                     std::fill_n(it_dst, kernel.right_size(), dst_zero);
+                }
             }
         }
     }
