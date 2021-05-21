@@ -138,6 +138,18 @@ void correlate_rows_impl(
                 pixel_assigns_t<src_pixel_ref_t, PixelAccum>()(src_view.row_end(y)[-1], filler);
                 std::fill_n(it_buffer, kernel.right_size(), filler);
             }
+            else if (option == boundary_option::extend_reflection)
+            {
+                assign_pixels(src_view.row_begin(y), src_view.row_begin(y) + kernel.left_size(),
+                    it_buffer);
+                std::reverse(buffer.begin(), buffer.begin() + kernel.left_size());
+                it_buffer += kernel.left_size();
+                assign_pixels(src_view.row_begin(y), src_view.row_end(y), it_buffer);
+                it_buffer += width;
+                assign_pixels(src_view.row_end(y) - kernel.right_size(), src_view.row_end(y),
+                    it_buffer);
+                std::reverse(buffer.end() - kernel.right_size(), buffer.end());
+            }
 
             correlator(
                 &buffer.front(), &buffer.front() + width,

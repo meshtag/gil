@@ -1,5 +1,6 @@
 //
 // Copyright 2019-2020 Mateusz Loskot <mateusz at loskot dot net>
+// Copyright 2021 Prathamesh Tagore <prathameshtagore@gmail.com>
 //
 // Distributed under the Boost Software License, Version 1.0
 // See accompanying file LICENSE_1_0.txt or copy at
@@ -110,12 +111,55 @@ struct test_image_5x5_kernel_3x3_identity
     }
 };
 
+struct test_image_5x5_kernel_1x9_boundary_extend_reflection
+{
+    template <typename Image>
+    void operator()(Image const&)
+    {
+        using image_t = Image;
+        using pixel_t = typename image_t::value_type;
+        using channel_t = typename gil::channel_type<pixel_t>::type;
+        auto img = fixture::generate_image<image_t>(5, 5, fixture::random_value<channel_t>{});
+        auto img_view = gil::view(img);
+        image_t img_out(img), img_expected_row(img);
+        unsigned int kernel_shift_offset = 2;
+
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_row),
+            kernel_shift_offset);
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_row),
+            -1, 0, 1, img_view.height(), 1);
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_row),
+            1, 0, 0, img_view.height(), 2);
+
+        image_t img_expected_col(img);
+
+        fixture::col_conv1D_offset_img_generator(gil::view(img_expected_row),
+            gil::view(img_expected_col), kernel_shift_offset);
+        fixture::col_conv1D_offset_img_generator(gil::view(img_expected_row),
+            gil::view(img_expected_col), -1, 1, 0, 1, img_view.width());
+        fixture::col_conv1D_offset_img_generator(gil::view(img_expected_row),
+            gil::view(img_expected_col), 1, 0, 0, 2, img_view.width());
+
+        auto const kernel = fixture::create_kernel<channel_t>({0, 0, 0, 0, 0, 0, 1, 0, 0});
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel, gil::view(img_out),
+            gil::boundary_option::extend_reflection);
+
+        BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected_col)));
+    }
+    static void run()
+    {
+        boost::mp11::mp_for_each<fixture::image_types>(
+            test_image_5x5_kernel_1x9_boundary_extend_reflection{});
+    }
+};
+
 int main()
 {
     test_image_1x1_kernel_1x1_identity::run();
     test_image_1x1_kernel_3x3_identity::run();
     test_image_3x3_kernel_3x3_identity::run();
     test_image_5x5_kernel_3x3_identity::run();
+    test_image_5x5_kernel_1x9_boundary_extend_reflection::run();
 
     return ::boost::report_errors();
 }
