@@ -37,13 +37,13 @@ namespace detail {
 /// \tparam SrcView - Specifies the type of gil view of source image which is to be row correlated
 /// with the kernel.
 /// \tparam Kernel - Specifies the type of 1D kernel which will be row correlated with source image.
-/// \tparam DstView -  Specifies the type of gil view which will store the result of row correlation 
-/// between source image and kernel.
+/// \tparam DstView -  Specifies the type of gil view which will store the result of row
+/// correlation between source image and kernel.
 /// \tparam Correlator - TODO
 /// \param src_view
 /// \param kernel - 1D kernel which will be correlated with source image.
-/// \param dst_view - Gil view which will store the result of row correlation between "src_view" and 
-/// "kernel".
+/// \param dst_view - Gil view which will store the result of row correlation between "src_view"
+/// and "kernel".
 /// \param option - Specifies the manner in which boundary pixels of "dst_view" should be computed.
 /// \param correlator - TODO
 template
