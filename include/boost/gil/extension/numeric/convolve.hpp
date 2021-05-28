@@ -105,9 +105,9 @@ void correlate_rows_impl(
                 it_dst += kernel.left_size();
                 correlator(&buffer.front(), &buffer.front() + width + 1 - kernel.size(),
                            kernel.begin(), it_dst);
+                it_dst += width + 1 - kernel.size();
                 if (option == boundary_option::output_zero)
                 {
-                    it_dst += width + 1 - kernel.size();
                     std::fill_n(it_dst, kernel.right_size(), dst_zero);
                 }
             }
