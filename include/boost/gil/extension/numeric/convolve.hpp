@@ -31,7 +31,7 @@ namespace boost { namespace gil {
 
 namespace detail {
 
-/// \brief Computes the correlation of 1D kernel with rows of an image.
+/// \brief Computes the cross-correlation of 1D kernel with rows of an image.
 /// \tparam PixelAccum - Specifies tha data type which will be used for creating buffer container 
 /// utilized for holding source image pixels after applying appropriate boundary manipulations.
 /// \tparam SrcView - Specifies the type of gil view of source image which is to be row correlated
@@ -46,7 +46,7 @@ namespace detail {
 /// \param dst_view - Gil view which will store the result of row correlation between "src_view"
 /// and "kernel".
 /// \param option - Specifies the manner in which boundary pixels of "dst_view" should be computed.
-/// \param correlator - Correlator which be used for performing correlation.
+/// \param correlator - Correlator which will be used for performing correlation.
 template
 <
     typename PixelAccum,
@@ -152,6 +152,9 @@ void correlate_rows_impl(
     }
 }
 
+/// \brief Provides functionality for performing 1D correlation between the kernel and a buffer
+/// storing row pixels of source image. Kernel size is to be provided through constructor for all
+/// instances.
 template <typename PixelAccum>
 class correlator_n
 {
@@ -172,6 +175,9 @@ private:
     std::size_t size_{0};
 };
 
+/// \brief Provides functionality for performing 1D correlation between the kernel and a buffer
+/// storing row pixels of source image. Kernel size is a template parameter and must be 
+// compulsorily specified while using.
 template <std::size_t Size, typename PixelAccum>
 struct correlator_k
 {
