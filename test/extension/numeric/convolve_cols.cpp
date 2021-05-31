@@ -78,13 +78,8 @@ struct test_image_5x5_kernel_1x9_boundary_extend_zero
         image_t img_out(img), img_expected(img_view.width(), img_view.height());
         unsigned int const kernel_shift_offset = 2;
 
-        for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
-        {
-            auto img_it = img_view.col_begin(x);
-            auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.height(); ++y)
-                img_expected_it[y] = img_it[y - 2];
-        }
+        fixture::col_conv1D_offset_img_generator(img_view, gil::view(img_expected),
+            kernel_shift_offset);
 
         auto const kernel_shift_by_two = fixture::create_kernel<channel_t>(
             {0, 0, 0, 0, 0, 0, 1, 0, 0});
@@ -112,14 +107,11 @@ struct test_image_5x5_kernel_1x9_boundary_extend_constant
         image_t img_out(img), img_expected(img);
         unsigned int const kernel_shift_offset = 2;
 
-        for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
-        {
-            auto img_it = img_view.col_begin(x);
-            auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.height(); ++y)
-                img_expected_it[y] = img_it[y - 2];
-            img_expected_it[1] = img_it[0];
-        }
+        fixture::col_conv1D_offset_img_generator(img_view, gil::view(img_expected),
+            kernel_shift_offset);
+        fixture::col_conv1D_offset_img_generator(img_view, gil::view(img_expected),
+            1, 0, 0, 2, img_view.width());
+
         auto const kernel_shift_by_two = fixture::create_kernel<channel_t>(
             {0, 0, 0, 0, 0, 0, 1, 0, 0});
         gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_two,
@@ -147,13 +139,8 @@ struct test_image_5x5_kernel_1x3_boundary_output_zero
         image_t img_out(img), img_expected(img_view.width(), img_view.height());
         unsigned int const kernel_shift_offset = 1;
 
-        for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
-        {
-            auto img_it = img_view.col_begin(x);
-            auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.height() - 1; ++y)
-                img_expected_it[y] = img_it[y - 1];
-        }
+        fixture::col_conv1D_offset_img_generator(img_view, gil::view(img_expected),
+            kernel_shift_offset, 0, 0, img_view.height() - 1, img_view.width());
 
         auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
         gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
@@ -181,13 +168,8 @@ struct test_image_5x5_kernel_1x3_boundary_output_ignore
         image_t img_out(img), img_expected(img);
         unsigned int const kernel_shift_offset = 1;
 
-        for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
-        {
-            auto img_it = img_view.col_begin(x);
-            auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.height() - 1; ++y)
-                img_expected_it[y] = img_it[y - 1];
-        }
+        fixture::col_conv1D_offset_img_generator(img_view, gil::view(img_expected),
+            kernel_shift_offset, 0, 0, img_view.height() - 1, img_view.width());
 
         auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
         gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
@@ -215,13 +197,8 @@ struct test_image_5x5_kernel_1x3_boundary_extend_padded
         image_t img_out(img), img_expected(img);
         unsigned int const kernel_shift_offset = 1;
 
-        for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
-        {
-            auto img_it = img_view.col_begin(x);
-            auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.width(); ++y)
-                img_expected_it[y] = img_it[y - 1];
-        }
+        fixture::col_conv1D_offset_img_generator(img_view, gil::view(img_expected),
+            kernel_shift_offset);
 
         auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
         gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
