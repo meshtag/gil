@@ -76,18 +76,20 @@ struct test_image_5x5_kernel_1x9_boundary_extend_zero
         auto img = fixture::generate_image<image_t>(5, 5, fixture::random_value<channel_t>{});
         auto img_view = gil::view(img);
         image_t img_out(img), img_expected(img_view.width(), img_view.height());
+        unsigned int const kernel_shift_offset = 2;
 
         for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
         {
             auto img_it = img_view.col_begin(x);
             auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = 2; y < img_view.height(); ++y)
+            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.height(); ++y)
                 img_expected_it[y] = img_it[y - 2];
         }
 
-        auto const kernel = fixture::create_kernel<channel_t>({0, 0, 0, 0, 0, 0, 1, 0, 0});
-        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out),
-            gil::boundary_option::extend_zero);
+        auto const kernel_shift_by_two = fixture::create_kernel<channel_t>(
+            {0, 0, 0, 0, 0, 0, 1, 0, 0});
+        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_two,
+            gil::view(img_out), gil::boundary_option::extend_zero);
         BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected)));
     }
     static void run()
@@ -108,18 +110,20 @@ struct test_image_5x5_kernel_1x9_boundary_extend_constant
         auto img = fixture::generate_image<image_t>(5, 5, fixture::random_value<channel_t>{});
         auto img_view = gil::view(img);
         image_t img_out(img), img_expected(img);
+        unsigned int const kernel_shift_offset = 2;
 
         for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
         {
             auto img_it = img_view.col_begin(x);
             auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = 2; y < img_view.height(); ++y)
+            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.height(); ++y)
                 img_expected_it[y] = img_it[y - 2];
             img_expected_it[1] = img_it[0];
         }
-        auto const kernel = fixture::create_kernel<channel_t>({0, 0, 0, 0, 0, 0, 1, 0, 0});
-        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out),
-            gil::boundary_option::extend_constant);
+        auto const kernel_shift_by_two = fixture::create_kernel<channel_t>(
+            {0, 0, 0, 0, 0, 0, 1, 0, 0});
+        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_two,
+            gil::view(img_out), gil::boundary_option::extend_constant);
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected)));
     }
@@ -130,7 +134,7 @@ struct test_image_5x5_kernel_1x9_boundary_extend_constant
     }
 };
 
-struct test_image_5x5_kernel_1x9_boundary_output_zero
+struct test_image_5x5_kernel_1x3_boundary_output_zero
 {
     template <typename Image>
     void operator()(Image const&)
@@ -141,29 +145,30 @@ struct test_image_5x5_kernel_1x9_boundary_output_zero
         auto img = fixture::generate_image<image_t>(5, 5, fixture::random_value<channel_t>{});
         auto img_view = gil::view(img);
         image_t img_out(img), img_expected(img_view.width(), img_view.height());
+        unsigned int const kernel_shift_offset = 1;
 
         for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
         {
             auto img_it = img_view.col_begin(x);
             auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = 1; y < img_view.height() - 1; ++y)
+            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.height() - 1; ++y)
                 img_expected_it[y] = img_it[y - 1];
         }
 
-        auto const kernel = fixture::create_kernel<channel_t>({0, 0, 1});
-        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out),
-            gil::boundary_option::output_zero);
+        auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
+        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
+            gil::view(img_out), gil::boundary_option::output_zero);
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected)));
     }
     static void run()
     {
         boost::mp11::mp_for_each<fixture::image_types>(
-            test_image_5x5_kernel_1x9_boundary_output_zero{});
+            test_image_5x5_kernel_1x3_boundary_output_zero{});
     }
 };
 
-struct test_image_5x5_kernel_1x9_boundary_output_ignore
+struct test_image_5x5_kernel_1x3_boundary_output_ignore
 {
     template <typename Image>
     void operator()(Image const&)
@@ -174,29 +179,30 @@ struct test_image_5x5_kernel_1x9_boundary_output_ignore
         auto img = fixture::generate_image<image_t>(5, 5, fixture::random_value<channel_t>{});
         auto img_view = gil::view(img);
         image_t img_out(img), img_expected(img);
+        unsigned int const kernel_shift_offset = 1;
 
         for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
         {
             auto img_it = img_view.col_begin(x);
             auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = 1; y < img_view.height() - 1; ++y)
+            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.height() - 1; ++y)
                 img_expected_it[y] = img_it[y - 1];
         }
 
-        auto const kernel = fixture::create_kernel<channel_t>({0, 0, 1});
-        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out),
-            gil::boundary_option::output_ignore);
+        auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
+        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
+            gil::view(img_out), gil::boundary_option::output_ignore);
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected)));
     }
     static void run()
     {
         boost::mp11::mp_for_each<fixture::image_types>(
-            test_image_5x5_kernel_1x9_boundary_output_ignore{});
+            test_image_5x5_kernel_1x3_boundary_output_ignore{});
     }
 };
 
-struct test_image_5x5_kernel_1x9_boundary_extend_padded
+struct test_image_5x5_kernel_1x3_boundary_extend_padded
 {
     template <typename Image>
     void operator()(Image const&)
@@ -207,18 +213,19 @@ struct test_image_5x5_kernel_1x9_boundary_extend_padded
         auto img = fixture::generate_image<image_t>(5, 5, fixture::random_value<channel_t>{});
         auto img_view = gil::view(img);
         image_t img_out(img), img_expected(img);
+        unsigned int const kernel_shift_offset = 1;
 
         for (std::ptrdiff_t x = 0; x < img_view.width(); ++x)
         {
             auto img_it = img_view.col_begin(x);
             auto img_expected_it = gil::view(img_expected).col_begin(x);
-            for (std::ptrdiff_t y = 1; y < img_view.width(); ++y)
+            for (std::ptrdiff_t y = kernel_shift_offset; y < img_view.width(); ++y)
                 img_expected_it[y] = img_it[y - 1];
         }
 
-        auto const kernel = fixture::create_kernel<channel_t>({0, 0, 1});
-        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out),
-            gil::boundary_option::extend_padded);
+        auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
+        gil::convolve_cols<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
+            gil::view(img_out), gil::boundary_option::extend_padded);
         
         // First column of "img_out" and "img_expected" is intentionally made similar.
         auto img_out_it = gil::view(img_out).row_begin(0);
@@ -231,7 +238,7 @@ struct test_image_5x5_kernel_1x9_boundary_extend_padded
     static void run()
     {
         boost::mp11::mp_for_each<fixture::image_types>(
-            test_image_5x5_kernel_1x9_boundary_extend_padded{});
+            test_image_5x5_kernel_1x3_boundary_extend_padded{});
     }
 };
 
@@ -241,9 +248,9 @@ int main()
     test_image_1x1_kernel_3x3_identity::run();
     test_image_5x5_kernel_1x9_boundary_extend_zero::run();
     test_image_5x5_kernel_1x9_boundary_extend_constant::run();
-    test_image_5x5_kernel_1x9_boundary_output_zero::run();
-    test_image_5x5_kernel_1x9_boundary_output_ignore::run();
-    test_image_5x5_kernel_1x9_boundary_extend_padded::run();
+    test_image_5x5_kernel_1x3_boundary_output_zero::run();
+    test_image_5x5_kernel_1x3_boundary_output_ignore::run();
+    test_image_5x5_kernel_1x3_boundary_extend_padded::run();
 
     return ::boost::report_errors();
 }
