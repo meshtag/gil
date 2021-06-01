@@ -29,7 +29,7 @@ auto create_kernel(std::initializer_list<T> const& values)
 }
 
 template <typename SrcView, typename DstView>
-void row_conv1D_offset_img_generator(SrcView src_view, DstView dst_view, unsigned int const offset,
+void row_conv1D_offset_img_generator(SrcView src_view, DstView dst_view, int const offset,
     std::ptrdiff_t start_row = 0, std::ptrdiff_t start_col = 0, std::ptrdiff_t end_row = -1,
     std::ptrdiff_t end_col = -1)
 {
@@ -54,7 +54,7 @@ void row_conv1D_offset_img_generator(SrcView src_view, DstView dst_view, unsigne
 }
 
 template <typename SrcView, typename DstView>
-void col_conv1D_offset_img_generator(SrcView src_view, DstView dst_view, unsigned int const offset,
+void col_conv1D_offset_img_generator(SrcView src_view, DstView dst_view, int const offset,
     std::ptrdiff_t start_row = 0, std::ptrdiff_t start_col = 0, std::ptrdiff_t end_row = -1,
     std::ptrdiff_t end_col = -1)
 {

@@ -33,7 +33,7 @@ struct test_image_1x1_kernel_1x1_identity
         using pixel_t = typename image_t::value_type;
         using channel_t = typename gil::channel_type<pixel_t>::type;
         auto const kernel = fixture::create_kernel<channel_t>({1});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out));
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel, gil::view(img_out));
 
         // 1x1 kernel reduces convolution to multiplication
         BOOST_TEST(gil::const_view(img).front() == gil::const_view(img_out).front());
@@ -56,7 +56,7 @@ struct test_image_1x1_kernel_3x3_identity
         using pixel_t = typename image_t::value_type;
         using channel_t = typename gil::channel_type<pixel_t>::type;
         auto const kernel = fixture::create_kernel<channel_t>({0, 0, 0, 0, 1, 0, 0, 0, 0});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out));
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel, gil::view(img_out));
 
         BOOST_TEST(gil::const_view(img).front() == gil::const_view(img_out).front());
     }
@@ -78,7 +78,7 @@ struct test_image_3x3_kernel_3x3_identity
         image_t img_out(img);
 
         auto const kernel = fixture::create_kernel<channel_t>({0, 0, 0, 0, 1, 0, 0, 0, 0});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out));
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel, gil::view(img_out));
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img), gil::const_view(img_out)));
     }
@@ -100,7 +100,7 @@ struct test_image_5x5_kernel_3x3_identity
         image_t img_out(img);
 
         auto const kernel = fixture::create_kernel<channel_t>({0, 0, 0, 0, 1, 0, 0, 0, 0});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel, gil::view(img_out));
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel, gil::view(img_out));
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img), gil::const_view(img_out)));
     }
@@ -138,7 +138,7 @@ struct test_image_5x5_kernel_1x9_boundary_extend_zero
 
         auto const kernel_shift_by_two = fixture::create_kernel<channel_t>(
             {0, 0, 0, 0, 0, 0, 1, 0, 0});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel_shift_by_two,
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel_shift_by_two,
             gil::view(img_out), boost::gil::boundary_option::extend_zero);
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected_col)));
@@ -176,7 +176,7 @@ struct test_image_5x5_kernel_1x9_boundary_extend_constant
             gil::view(img_expected_col), 1, 0, 0, 2, img_view.width());
 
         auto const kernel_shift_by_two = fixture::create_kernel<channel_t>({0, 0, 0, 0, 0, 0, 1, 0, 0});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel_shift_by_two,
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel_shift_by_two,
             gil::view(img_out), boost::gil::boundary_option::extend_constant);
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected_col)));
@@ -209,7 +209,7 @@ struct test_image_5x5_kernel_1x3_boundary_output_zero
             img_view.width());
 
         auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel_shift_by_one,
             gil::view(img_out), boost::gil::boundary_option::output_zero);
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected_col)));
@@ -244,7 +244,7 @@ struct test_image_5x5_kernel_1x3_boundary_output_ignore
             img_view.width());
         
         auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel_shift_by_one,
             gil::view(img_out), gil::boundary_option::output_ignore);
 
         BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected_col)));
@@ -278,7 +278,7 @@ struct test_image_5x5_kernel_1x3_boundary_extend_padded
             gil::view(img_expected_col), kernel_shift_offset);
 
         auto const kernel_shift_by_one = fixture::create_kernel<channel_t>({0, 0, 1});
-        gil::detail::convolve_1d<pixel_t>(gil::const_view(img_out), kernel_shift_by_one,
+        gil::detail::convolve_1d<pixel_t>(gil::const_view(img), kernel_shift_by_one,
             gil::view(img_out), gil::boundary_option::extend_padded);
 
         // First row and first column of "img_out" and "img_expected_col" are intentionally made
