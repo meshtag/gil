@@ -28,6 +28,8 @@ auto create_kernel(std::initializer_list<T> const& values)
     return kernel;
 }
 
+// Adds an offset similar to 1D row convolution with kernel {0, 0, 0, 0, 0, 0, 1, 0, 0} 
+// having its anchor point at 5th element and boundary option as "extend_zero".
 template <typename SrcView, typename DstView>
 void row_conv1D_offset_img_generator(SrcView src_view, DstView dst_view, int const offset,
     std::ptrdiff_t start_row = 0, std::ptrdiff_t start_col = 0, std::ptrdiff_t end_row = -1,
@@ -53,6 +55,8 @@ void row_conv1D_offset_img_generator(SrcView src_view, DstView dst_view, int con
     }
 }
 
+// Adds an offset similar to 1D column convolution with kernel {0, 0, 0, 0, 0, 0, 1, 0, 0} 
+// having its anchor point at 5th element and boundary option as "extend_zero".
 template <typename SrcView, typename DstView>
 void col_conv1D_offset_img_generator(SrcView src_view, DstView dst_view, int const offset,
     std::ptrdiff_t start_row = 0, std::ptrdiff_t start_col = 0, std::ptrdiff_t end_row = -1,
