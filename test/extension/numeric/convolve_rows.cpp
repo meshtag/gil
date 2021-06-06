@@ -75,21 +75,38 @@ struct test_image_5x5_kernel_1x9_boundary_extend_reflection
         using channel_t = typename gil::channel_type<pixel_t>::type;
         auto img = fixture::generate_image<image_t>(5, 5, fixture::random_value<channel_t>{});
         auto img_view = gil::view(img);
-        image_t img_out(img), img_expected(img);
-        unsigned int kernel_shift_offset = 2;
+        image_t img_out_up_offset(img), img_expected_up_offset(img);
+        image_t img_out_down_offset(img),  img_expected_down_offset(img);
+        int kernel_shift_up_offset = 2, kernel_shift_down_offset = -2;
 
-        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected),
-            kernel_shift_offset);
-        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected),
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_up_offset),
+            kernel_shift_up_offset);
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_up_offset),
             -1, 0, 1, img_view.height(), 1);
-        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected),
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_up_offset),
             1, 0, 0, img_view.height(), 2);
 
-        auto const kernel = fixture::create_kernel<channel_t>({0, 0, 0, 0, 0, 0, 1, 0, 0});
-        gil::convolve_rows<pixel_t>(gil::const_view(img), kernel, gil::view(img_out),
-            gil::boundary_option::extend_reflection);
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_down_offset),
+            kernel_shift_down_offset, 0, 2, img_view.height(), img_view.width());
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_down_offset),
+            -1, 0, img_view.width() - 1, img_view.height(), img_view.width());
+        fixture::row_conv1D_offset_img_generator(img_view, gil::view(img_expected_down_offset),
+            1, 0, img_view.width() - 2, img_view.height(), img_view.width());
 
-        BOOST_TEST(gil::equal_pixels(gil::const_view(img_out), gil::const_view(img_expected)));
+        auto const kernel_up_offset = fixture::create_kernel<channel_t>(
+            {0, 0, 0, 0, 0, 0, 1, 0, 0});
+        gil::convolve_rows<pixel_t>(gil::const_view(img), kernel_up_offset, 
+            gil::view(img_out_up_offset), gil::boundary_option::extend_reflection);
+
+        auto const kernel_down_offset = fixture::create_kernel<channel_t>(
+            {0, 0, 1, 0, 0, 0, 0, 0, 0});
+        gil::convolve_rows<pixel_t>(gil::const_view(img), kernel_down_offset, 
+            gil::view(img_out_down_offset), gil::boundary_option::extend_reflection);
+
+        BOOST_TEST(gil::equal_pixels(gil::const_view(img_out_up_offset),
+            gil::const_view(img_expected_up_offset)));
+        BOOST_TEST(gil::equal_pixels(gil::const_view(img_out_down_offset), 
+            gil::const_view(img_expected_down_offset)));
     }
     static void run()
     {
