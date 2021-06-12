@@ -106,6 +106,22 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
     auto img_in_modified = gil::extend_row(gil::view(img_in_modified_col), 1, 
         gil::boundary_option::extend_zero);
     auto it_dst = dst_view.begin();
+    unsigned int tile_size = 16;
+
+    // for (std::ptrdiff_t view_row_tile = 0; view_row_tile < gil::view(img_in_modified).height() - 1; view_row_tile += tile_size)
+    // {
+    //     for (std::ptrdiff_t view_col = 1; view_col < gil::view(img_in_modified).width() - 1; ++view_col)
+    //     {
+    //         for (std::ptrdiff_t view_row = view_row_tile + 1; 
+    //             (view_row <= view_row_tile + tile_size) && (view_row < gil::view(img_in_modified).height() - 1); ++view_row)
+    //         {
+    //             dst_view(view_col - 1, view_row - 1)[0] = image_correlate_impl(
+    //                 gil::subimage_view(gil::view(img_in_modified), view_row - 1, view_col - 1, 
+    //                 std::sqrt(kernel.size()), std::sqrt(kernel.size())), kernel);
+    //         }
+    //     }
+    // }
+
 
     for (std::ptrdiff_t view_row = 1; view_row < gil::view(img_in_modified).height() - 1; ++view_row)
     {
@@ -120,6 +136,29 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
             ++it_dst;
         }
     }
+
+    // std::vector<typename SrcView::value_type> src_view_vec(kernel.size());
+    // std::copy(gil::view(img_in_modified).begin(), gil::view(img_in_modified).begin() + kernel.size(), src_view_vec.begin());
+
+    // for (std::ptrdiff_t view_row = 1; view_row < gil::view(img_in_modified).height() - 1; ++view_row)
+    // {
+    //     for (std::ptrdiff_t view_col = 1; view_col < gil::view(img_in_modified).width() - 1; ++view_col)
+    //     {
+    //         // dst_view(view_col - 1, view_row - 1)[0] = image_correlate_impl(
+    //         //     gil::subimage_view(gil::view(img_in_modified), view_row - 1, view_col - 1, 
+    //         //     std::sqrt(kernel.size()), std::sqrt(kernel.size())), kernel);
+    //         *it_dst = image_correlate_impl(
+    //             src_view_vec, kernel);
+
+    //         pixel_assigns_t<typename SrcView::value_type, typename SrcView::value_type>()(
+    //         ,
+    //         *dst_begin);
+            
+            
+
+    //         ++it_dst;
+    //     }
+    // }
 
 }
 

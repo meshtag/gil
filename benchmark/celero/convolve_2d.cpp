@@ -24,9 +24,10 @@ public:
         gil::read_image("/home/prathamesh/Desktop/Conv_Images/resize_512_gray.png", img, 
             gil::png_tag{});
         this -> img_out.recreate((this -> img).dimensions());
+        this -> img_out1.recreate((this -> img).dimensions());
     }
     gil::gray8_image_t img;
-    gil::gray8_image_t img_out;
+    gil::gray8_image_t img_out, img_out1;
     std::vector<float> v{std::vector<float>(9, 1.0f / 9.0f)};
     gil::detail::kernel_2d<float> kernel{gil::detail::kernel_2d<float>(v.begin(), v.size(), 1, 1)};
 };
@@ -50,7 +51,7 @@ BASELINE_F(HistogramGray8, 1d_raw_pointer, RandomImageGray8Fixture, samples, ite
 BENCHMARK_F(HistogramGray8, 1d_raw_pointer_1, RandomImageGray8Fixture, samples, iterations)
 {
     gil::detail::image_correlate(gil::const_view(this -> img), this -> v, 
-        gil::view(this -> img_out));
+        gil::view(this -> img_out1));
 }
 
 CELERO_MAIN
