@@ -84,6 +84,49 @@ void correlate_2d(SrcView const& src_view, Kernel const& kernel, DstView const& 
         );
     }
 }
+
+
+template <typename SrcView>
+auto image_correlate_impl(SrcView src_view, std::vector<float> kernel) 
+    -> float
+{
+    typename SrcView::iterator src_view_it = src_view.begin();
+    using pixel_t = typename SrcView::value_type;
+    std::vector<typename SrcView::value_type> src_view_vec;
+    pixel_t zero_pixel;
+    pixel_zeros_t<pixel_t>()(zero_pixel);
+
+    while (src_view_it != src_view.end())
+    {
+        src_view_vec.push_back(*src_view_it);
+        ++src_view_it;
+    }
+
+    float ans = std::inner_product(src_view_vec.begin(), src_view_vec.end(),
+                    kernel.begin(), zero_pixel, gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(),
+                    gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
+
+    return ans;
+}
+
+template <typename SrcView, typename DstView>
+void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_view) 
+{
+    auto img_in_modified_col = gil::extend_col(src_view, 1, gil::boundary_option::extend_zero);
+    auto img_in_modified = gil::extend_row(gil::view(img_in_modified_col), 1, 
+        gil::boundary_option::extend_zero);
+
+    for (std::ptrdiff_t view_row = 1; view_row < gil::view(img_in_modified).height() - 1; ++view_row)
+    {
+        for (std::ptrdiff_t view_col = 1; view_col < gil::view(img_in_modified).width() - 1; ++view_col)
+        {
+            dst_view(view_col - 1, view_row - 1)[0] = image_correlate_impl(
+                gil::subimage_view(gil::view(img_in_modified), view_row - 1, view_col - 1, 
+                std::sqrt(kernel.size()), std::sqrt(kernel.size())), kernel);
+        }
+    }
+}
+
 } } } // namespace boost::gil::detail
 
 #endif

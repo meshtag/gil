@@ -29,33 +29,6 @@
 #include <type_traits>
 #include <vector>
 
-using namespace boost::gil;
-
-template <typename SrcView>
-auto image_correlate(SrcView src_view, std::vector<float> kernel) 
-    -> std::ptrdiff_t
-{
-    typename SrcView::iterator src_view_it = src_view.begin();
-    using pixel_t = typename SrcView::value_type;
-    std::vector<typename SrcView::value_type> src_view_vec;
-    pixel_t zero_pixel;
-    pixel_zeros_t<pixel_t>()(zero_pixel);
-
-    while (src_view_it != src_view.end())
-    {
-        src_view_vec.push_back(*src_view_it);
-        ++src_view_it;
-    }
-
-    std::ptrdiff_t ans = std::inner_product(src_view_vec.begin(), src_view_vec.end(),
-                            kernel.begin(), zero_pixel, pixel_plus_t<pixel_t, pixel_t, pixel_t>(),
-                            pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
-
-    return ans;
-}
-
-
-
 namespace gil = boost::gil;
 
 std::uint8_t img[] =
@@ -114,7 +87,7 @@ int main()
             nth_channel_view(gil::view(img_in), 0)(i, j)[0] = i + j;
 
     std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
-    std::vector<float> p = {0, 0, 0, 0, 0, 1, 0, 0, 0};
+    std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 1, 0};
     gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
     for (int i = 0 ; i < 3; ++i)
     {
@@ -141,17 +114,9 @@ int main()
     }
 
     gil::gray8_image_t img_obtained(5, 5);
-    for (std::ptrdiff_t view_row = 1; view_row < gil::view(img_in).height() - 1; ++view_row)
-    {
-        for (std::ptrdiff_t view_col = 1; view_col < gil::view(img_in).width() - 1; ++view_col)
-        {
-            gil::view(img_obtained)(view_col, view_row) = image_correlate(gil::subimage_view(
-                gil::view(img_in), view_row - 1, view_col - 1, 3, 3), p);
-        }
-    }
+    gil::detail::image_correlate(gil::const_view(img_in), p, gil::view(img_obtained));
 
     std::cout << "\n\n";
-
     for (int i = 0; i < 5; ++i)
     {
         for (int j = 0; j < 5; ++j)
