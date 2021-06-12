@@ -31,8 +31,6 @@ void correlate_2d_impl(SrcView const& src_view, DstView const& dst_view, Kernel 
             aux_total = 0.0f;
             for (std::size_t kernel_row = 0; kernel_row < kernel.size(); ++kernel_row)
             {
-                // flip_ker_row = kernel.size() - 1 - kernel_row;      // row index of flipped kernel
-
                 for (std::size_t kernel_col = 0; kernel_col < kernel.size(); ++kernel_col)
                 {
                     // index of input signal, used for checking boundary
