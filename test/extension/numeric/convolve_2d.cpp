@@ -7,6 +7,7 @@
 //
 #include <boost/gil.hpp>
 #include <boost/gil/extension/numeric/convolve.hpp>
+#include <boost/gil/extension/numeric/convolve_novel.hpp>
 
 #include <boost/core/lightweight_test.hpp>
 
@@ -30,46 +31,27 @@
 
 using namespace boost::gil;
 
-template <typename SrcView, typename DstView>
-void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_view)
+template <typename SrcView>
+auto image_correlate(SrcView src_view, std::vector<float> kernel) 
+    -> std::ptrdiff_t
 {
     typename SrcView::iterator src_view_it = src_view.begin();
+    using pixel_t = typename SrcView::value_type;
     std::vector<typename SrcView::value_type> src_view_vec;
-    typename SrcView::value_type zero_pixel;
-    pixel_zeros_t<typename SrcView::value_type>()(zero_pixel);
-    using p = typename SrcView::value_type;
+    pixel_t zero_pixel;
+    pixel_zeros_t<pixel_t>()(zero_pixel);
 
     while (src_view_it != src_view.end())
     {
         src_view_vec.push_back(*src_view_it);
         ++src_view_it;
     }
-    auto it = src_view_vec.begin();
-    auto it_dst = dst_view.begin();
 
-    while (it != src_view_vec.end())
-    {
-        pixel_assigns_t<p, p>()(
-        std::inner_product(
-            it,
-            it + kernel.size(),
-            kernel.begin(),
-            zero_pixel,
-            pixel_plus_t<p, p, p>(),
-            pixel_multiplies_scalar_t<p, float, p>()),
-        *it_dst);
-        ++it;
-        ++it_dst;
+    std::ptrdiff_t ans = std::inner_product(src_view_vec.begin(), src_view_vec.end(),
+                            kernel.begin(), zero_pixel, pixel_plus_t<pixel_t, pixel_t, pixel_t>(),
+                            pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
 
-    std::cout << "\n\n";
-    for (int i = 0; i < 3; ++i)
-    {
-        for (int j = 0; j < 3; ++j)
-            std::cout << static_cast<unsigned int>(nth_channel_view(dst_view, 0)(i, j)[0]) << " ";
-        std::cout << "\n";
-    }
-
-    }
+    return ans;
 }
 
 
@@ -126,39 +108,56 @@ int main()
 {
     test_convolve_2d_with_normalized_mean_filter();
 
-    gray8_image_t img(3, 3), img_out(3, 3), img_out_lib(3, 3);
-    std::vector<float> kernel = {10};
-    gil::detail::kernel_2d<float> kernel1(kernel.begin(), kernel.size(), 0, 0);
+    gil::gray8_image_t img_in(5, 5), img_out(5, 5);
+    for (int i = 0; i < 5; ++i)
+        for (int j = 0; j < 5; ++j)
+            nth_channel_view(gil::view(img_in), 0)(i, j)[0] = i + j;
 
-
-    for (int i = 0; i < 3; ++i)
-        for (int j = 0; j < 3; ++j)
-            nth_channel_view(view(img), 0)(i, j)[0] = i + j;
-    gil::detail::convolve_2d(view(img), kernel1, view(img_out_lib));
-
-    image_correlate(view(img), kernel, view(img_out));
-    for (int i = 0; i < 3; ++i)
+    std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
+    std::vector<float> p = {0, 0, 0, 0, 0, 1, 0, 0, 0};
+    gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
+    for (int i = 0 ; i < 3; ++i)
     {
         for (int j = 0; j < 3; ++j)
-            std::cout << static_cast<unsigned int>(nth_channel_view(view(img), 0)(i, j)[0]) << " ";
+            std::cout << static_cast<int>(kernel.at(i, j)) << " ";
         std::cout << "\n";
     }
+    gil::detail::correlate_2d(gil::const_view(img_in), kernel, gil::view(img_out));
+
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_in), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
+
     std::cout << "\n\n";
-    for (int i = 0; i < 3; ++i)
+
+    for (int i = 0; i < 5; ++i)
     {
-        for (int j = 0; j < 3; ++j)
-            std::cout << static_cast<unsigned int>(nth_channel_view(view(img_out), 0)(i, j)[0]) << " ";
-        std::cout << "\n";
-    }
-    std::cout << "\n\n";
-    for (int i = 0; i < 3; ++i)
-    {
-        for (int j = 0; j < 3; ++j)
-            std::cout << static_cast<unsigned int>(nth_channel_view(view(img_out_lib), 0)(i, j)[0]) << " ";
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_out), 0)(j, i)[0]) << " ";
         std::cout << "\n";
     }
 
-    BOOST_TEST(gil::equal_pixels(view(img_out), view(img_out_lib)));
+    gil::gray8_image_t img_obtained(5, 5);
+    for (std::ptrdiff_t view_row = 1; view_row < gil::view(img_in).height() - 1; ++view_row)
+    {
+        for (std::ptrdiff_t view_col = 1; view_col < gil::view(img_in).width() - 1; ++view_col)
+        {
+            gil::view(img_obtained)(view_col, view_row) = image_correlate(gil::subimage_view(
+                gil::view(img_in), view_row - 1, view_col - 1, 3, 3), p);
+        }
+    }
+
+    std::cout << "\n\n";
+
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_obtained), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
 
     return ::boost::report_errors();
 }
