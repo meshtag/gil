@@ -7,10 +7,27 @@
 //
 #include <boost/gil.hpp>
 #include <boost/gil/extension/numeric/convolve.hpp>
+#include <boost/gil/extension/numeric/convolve_novel.hpp>
 
 #include <boost/core/lightweight_test.hpp>
 
 #include <cstddef>
+
+#include <boost/gil/extension/numeric/algorithm.hpp>
+#include <boost/gil/extension/numeric/kernel.hpp>
+#include <boost/gil/extension/numeric/pixel_numeric_operations.hpp>
+
+#include <boost/gil/algorithm.hpp>
+#include <boost/gil/image_view_factory.hpp>
+#include <boost/gil/metafunctions.hpp>
+
+#include <boost/assert.hpp>
+
+#include <algorithm>
+#include <cstddef>
+#include <functional>
+#include <type_traits>
+#include <vector>
 
 namespace gil = boost::gil;
 
@@ -63,6 +80,49 @@ void test_convolve_2d_with_normalized_mean_filter()
 int main()
 {
     test_convolve_2d_with_normalized_mean_filter();
+
+    gil::gray8_image_t img_in(5, 5), img_out(5, 5);
+    for (int i = 0; i < 5; ++i)
+        for (int j = 0; j < 5; ++j)
+            nth_channel_view(gil::view(img_in), 0)(i, j)[0] = i + j;
+
+    std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
+    std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 1, 0};
+    gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
+    for (int i = 0 ; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+            std::cout << static_cast<int>(kernel.at(i, j)) << " ";
+        std::cout << "\n";
+    }
+    gil::detail::correlate_2d(gil::const_view(img_in), kernel, gil::view(img_out));
+
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_in), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
+
+    std::cout << "\n\n";
+
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_out), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
+
+    gil::gray8_image_t img_obtained(5, 5);
+    gil::detail::image_correlate(gil::const_view(img_in), p, gil::view(img_obtained));
+
+    std::cout << "\n\n";
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_obtained), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
 
     return ::boost::report_errors();
 }
