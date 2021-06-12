@@ -81,6 +81,8 @@ target_compile_definitions(gil_compile_options
 # Dependency target
 #-----------------------------------------------------------------------------
 add_library(gil_dependencies INTERFACE)
+find_package(Threads)
+target_link_libraries(gil_dependencies INTERFACE Threads::Threads)
 
 #-----------------------------------------------------------------------------
 # Dependency: Boost

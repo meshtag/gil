@@ -123,6 +123,7 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
                 std::sqrt(kernel.size()), std::sqrt(kernel.size())), kernel);
         }
     }
+
 }
 
 } } } // namespace boost::gil::detail
