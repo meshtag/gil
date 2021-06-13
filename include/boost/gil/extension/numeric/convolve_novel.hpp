@@ -113,25 +113,31 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
         gil::boundary_option::extend_zero);
 
     using pixel_t = typename SrcView::value_type;
-    std::vector<pixel_t> buffer(kernel.size());
+    std::vector<pixel_t> buffer(kernel.size()), buffer_check(kernel.size());
 
     auto src_sub_view = gil::subimage_view(gil::view(img_in_modified), 0, 0, 
         std::sqrt(kernel.size()), std::sqrt(kernel.size()));
     std::copy(src_sub_view.begin(), src_sub_view.end(), buffer.begin());
+    buffer_check = buffer;
 
-    std::cout << "\n\n";
-    for (int i = 0; i < 7; ++i)
-    {
-        for (int j = 0; j < 7; ++j)
-            std::cout << static_cast<int>(nth_channel_view(gil::view(img_in_modified), 0)(j, i)[0]) << " ";
-        std::cout << "\n";
-    }
-    std::cout << "\n\n";
+    // std::cout << "\n\n";
+    // for (int i = 0; i < 7; ++i)
+    // {
+    //     for (int j = 0; j < 7; ++j)
+    //         std::cout << static_cast<int>(nth_channel_view(gil::view(img_in_modified), 0)(j, i)[0]) << " ";
+    //     std::cout << "\n";
+    // }
+    // std::cout << "\n\n";
 
     for (std::ptrdiff_t row = 1; row < gil::view(img_in_modified).height() - 1; ++row)
     {
         for (std::ptrdiff_t col = 1; col < gil::view(img_in_modified).width() - 1; ++col)
         {
+
+            // if (buffer == buffer_check)
+            //     std::cout << "1  \n";
+            // else 
+            //     std::cout << "2  \n", buffer = buffer_check;
 
             if (col < 2)
             {
@@ -143,34 +149,34 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
 
             dst_view(col - 1, row - 1) = image_correlate_impl(buffer, kernel);
 
-            if (col < 2)
-            {
-                std::cout << "1  \n\n\n";
-                for (auto a : buffer)
-                    std::cout << static_cast<int>(a) << " ";
-                std::cout << "\n\n 1 \n";
-            }
+            // if (col < 2)
+            // {
+            //     std::cout << "1  \n\n\n";
+            //     for (auto a : buffer)
+            //         std::cout << static_cast<int>(a) << " ";
+            //     std::cout << "\n\n 1 \n";
+            // }
 
             std::rotate(buffer.begin(), buffer.begin() + std::sqrt(kernel.size()), buffer.end());
 
-            if (col < 2)
-            {
-                std::cout << "2  \n\n\n";
-                for (auto a : buffer)
-                    std::cout << static_cast<int>(a) << " ";
-                std::cout << "\n\n 2 \n";
-            }
+            // if (col < 2)
+            // {
+            //     std::cout << "2  \n\n\n";
+            //     for (auto a : buffer)
+            //         std::cout << static_cast<int>(a) << " ";
+            //     std::cout << "\n\n 2 \n";
+            // }
 
-            src_sub_view = gil::subimage_view(gil::view(img_in_modified), row - 1, col, 
+            src_sub_view = gil::subimage_view(gil::view(img_in_modified), col, row - 1, 
                 std::sqrt(kernel.size()), std::sqrt(kernel.size()));
 
-            if (col < 2)
-            {
-                std::cout << "3  \n\n\n";
-                for (auto a : src_sub_view)
-                    std::cout << static_cast<int>(a) << " ";
-                std::cout << "\n\n 3 \n";
-            }
+            // if (col < 2)
+            // {
+            //     std::cout << "3  \n\n\n";
+            //     for (auto a : src_sub_view)
+            //         std::cout << static_cast<int>(a) << " ";
+            //     std::cout << "\n\n 3 \n";
+            // }
 
             std::copy(src_sub_view.begin() + 2 * std::sqrt(kernel.size()), src_sub_view.end(), 
                 buffer.begin() + 2 * std::sqrt(kernel.size()));
@@ -182,9 +188,18 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
                     std::cout << static_cast<int>(a) << " ";
                 std::cout << "\n\n 4 \n";
             }
-
+            buffer_check = buffer;
 
         }
+
+        // std::cout << "\n\n\n\n";
+        // for (int i = 0; i < 5; ++i)
+        // {
+        //     for (int j = 0; j < 5; ++j)
+        //         std::cout << static_cast<int>(dst_view(j, i)[0]) << " ";
+        //     std::cout << "\n";
+        // }
+
 
     }
 

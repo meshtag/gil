@@ -89,12 +89,12 @@ int main()
     std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
     std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 1, 0};
     gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
-    for (int i = 0 ; i < 3; ++i)
-    {
-        for (int j = 0; j < 3; ++j)
-            std::cout << static_cast<int>(kernel.at(i, j)) << " ";
-        std::cout << "\n";
-    }
+    // for (int i = 0 ; i < 3; ++i)
+    // {
+    //     for (int j = 0; j < 3; ++j)
+    //         std::cout << static_cast<int>(kernel.at(i, j)) << " ";
+    //     std::cout << "\n";
+    // }
     gil::detail::correlate_2d(gil::const_view(img_in), kernel, gil::view(img_out));
 
     for (int i = 0; i < 5; ++i)
