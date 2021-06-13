@@ -117,5 +117,34 @@ int main()
     test_image_3x3_kernel_3x3_identity::run();
     test_image_5x5_kernel_3x3_identity::run();
 
+    gil::gray8_image_t img(5, 5);
+    std::vector<int> vec;
+    for (int i = 1; i < 26; ++i)
+        vec.push_back(i);
+    for (int i = 0; i < 5; ++i)
+        for (int j = 0; j < 5; ++j)
+            nth_channel_view(gil::view(img), 0)(j, i)[0] = vec[5 * i + j];
+
+    auto sub_view = gil::subimage_view(gil::view(img), 0, 0, 3, 3);
+
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
+    std::cout << "\n\n";
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+            std::cout << static_cast<int>(nth_channel_view(sub_view, 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
+
+    auto it = gil::view(img).begin();
+    while (it != gil::view(img).end())
+        std::cout << static_cast<int>(*it) << " ", ++it;
+    std::cout << "\n";
+
     return ::boost::report_errors();
 }
