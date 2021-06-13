@@ -16,6 +16,7 @@
 #include <functional>
 #include <type_traits>
 #include <vector>
+#include <iostream>
 
 namespace boost { namespace gil { namespace detail { 
 
@@ -96,6 +97,11 @@ auto image_correlate_impl(SrcView src_view, std::vector<float> kernel)
                     kernel.begin(), zero_pixel, gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(),
                     gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
 
+    // std::cout << "\n\n\n";
+    // for (auto a : src_view)
+    //     std::cout << static_cast<int>(a) << " ";
+    // std::cout << "\n\n\n";
+
     return ans;
 }
 
@@ -105,60 +111,82 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
     auto img_in_modified_col = gil::extend_col(src_view, 1, gil::boundary_option::extend_zero);
     auto img_in_modified = gil::extend_row(gil::view(img_in_modified_col), 1, 
         gil::boundary_option::extend_zero);
-    auto it_dst = dst_view.begin();
-    unsigned int tile_size = 16;
 
-    // for (std::ptrdiff_t view_row_tile = 0; view_row_tile < gil::view(img_in_modified).height() - 1; view_row_tile += tile_size)
-    // {
-    //     for (std::ptrdiff_t view_col = 1; view_col < gil::view(img_in_modified).width() - 1; ++view_col)
-    //     {
-    //         for (std::ptrdiff_t view_row = view_row_tile + 1; 
-    //             (view_row <= view_row_tile + tile_size) && (view_row < gil::view(img_in_modified).height() - 1); ++view_row)
-    //         {
-    //             dst_view(view_col - 1, view_row - 1)[0] = image_correlate_impl(
-    //                 gil::subimage_view(gil::view(img_in_modified), view_row - 1, view_col - 1, 
-    //                 std::sqrt(kernel.size()), std::sqrt(kernel.size())), kernel);
-    //         }
-    //     }
-    // }
+    using pixel_t = typename SrcView::value_type;
+    std::vector<pixel_t> buffer(kernel.size());
 
+    auto src_sub_view = gil::subimage_view(gil::view(img_in_modified), 0, 0, 
+        std::sqrt(kernel.size()), std::sqrt(kernel.size()));
+    std::copy(src_sub_view.begin(), src_sub_view.end(), buffer.begin());
 
-    for (std::ptrdiff_t view_row = 1; view_row < gil::view(img_in_modified).height() - 1; ++view_row)
+    std::cout << "\n\n";
+    for (int i = 0; i < 7; ++i)
     {
-        for (std::ptrdiff_t view_col = 1; view_col < gil::view(img_in_modified).width() - 1; ++view_col)
-        {
-            // dst_view(view_col - 1, view_row - 1)[0] = image_correlate_impl(
-            //     gil::subimage_view(gil::view(img_in_modified), view_row - 1, view_col - 1, 
-            //     std::sqrt(kernel.size()), std::sqrt(kernel.size())), kernel);
-            *it_dst = image_correlate_impl(
-                gil::subimage_view(gil::view(img_in_modified), view_row - 1, view_col - 1, 
-                std::sqrt(kernel.size()), std::sqrt(kernel.size())), kernel);
-            ++it_dst;
-        }
+        for (int j = 0; j < 7; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_in_modified), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
     }
+    std::cout << "\n\n";
 
-    // std::vector<typename SrcView::value_type> src_view_vec(kernel.size());
-    // std::copy(gil::view(img_in_modified).begin(), gil::view(img_in_modified).begin() + kernel.size(), src_view_vec.begin());
+    for (std::ptrdiff_t row = 1; row < gil::view(img_in_modified).height() - 1; ++row)
+    {
+        for (std::ptrdiff_t col = 1; col < gil::view(img_in_modified).width() - 1; ++col)
+        {
 
-    // for (std::ptrdiff_t view_row = 1; view_row < gil::view(img_in_modified).height() - 1; ++view_row)
-    // {
-    //     for (std::ptrdiff_t view_col = 1; view_col < gil::view(img_in_modified).width() - 1; ++view_col)
-    //     {
-    //         // dst_view(view_col - 1, view_row - 1)[0] = image_correlate_impl(
-    //         //     gil::subimage_view(gil::view(img_in_modified), view_row - 1, view_col - 1, 
-    //         //     std::sqrt(kernel.size()), std::sqrt(kernel.size())), kernel);
-    //         *it_dst = image_correlate_impl(
-    //             src_view_vec, kernel);
+            if (col < 2)
+            {
+                std::cout << "0  \n\n\n";
+                for (auto a : buffer)
+                    std::cout << static_cast<int>(a) << " ";
+                std::cout << "\n\n 0 \n";
+            }
 
-    //         pixel_assigns_t<typename SrcView::value_type, typename SrcView::value_type>()(
-    //         ,
-    //         *dst_begin);
-            
-            
+            dst_view(col - 1, row - 1) = image_correlate_impl(buffer, kernel);
 
-    //         ++it_dst;
-    //     }
-    // }
+            if (col < 2)
+            {
+                std::cout << "1  \n\n\n";
+                for (auto a : buffer)
+                    std::cout << static_cast<int>(a) << " ";
+                std::cout << "\n\n 1 \n";
+            }
+
+            std::rotate(buffer.begin(), buffer.begin() + std::sqrt(kernel.size()), buffer.end());
+
+            if (col < 2)
+            {
+                std::cout << "2  \n\n\n";
+                for (auto a : buffer)
+                    std::cout << static_cast<int>(a) << " ";
+                std::cout << "\n\n 2 \n";
+            }
+
+            src_sub_view = gil::subimage_view(gil::view(img_in_modified), row - 1, col, 
+                std::sqrt(kernel.size()), std::sqrt(kernel.size()));
+
+            if (col < 2)
+            {
+                std::cout << "3  \n\n\n";
+                for (auto a : src_sub_view)
+                    std::cout << static_cast<int>(a) << " ";
+                std::cout << "\n\n 3 \n";
+            }
+
+            std::copy(src_sub_view.begin() + 2 * std::sqrt(kernel.size()), src_sub_view.end(), 
+                buffer.begin() + 2 * std::sqrt(kernel.size()));
+
+            if (col < 2)
+            {
+                std::cout << "4  \n\n\n";
+                for (auto a : buffer)
+                    std::cout << static_cast<int>(a) << " ";
+                std::cout << "\n\n 4 \n";
+            }
+
+
+        }
+
+    }
 
 }
 
