@@ -19,15 +19,24 @@ public:
 
     void setUp(const celero::TestFixture::ExperimentValue& experimentValue) final
     {
-        // gil::read_image("/home/prathamesh/Desktop/Conv_Images/resize_512_gray.png", img, 
-        //     gil::png_tag{});
-        gil::read_image("/home/prathamesh/Desktop/Conv_Images/resize_512_gray.png", img, 
-            gil::png_tag{});
-        this -> img_out.recreate((this -> img).dimensions());
-        this -> img_out1.recreate((this -> img).dimensions());
+        gil::read_image("resize_256_gray.png", img_256, gil::png_tag{});
+        gil::read_image("resize_512_gray.png", img_512, gil::png_tag{});
+        gil::read_image("resize_1024_gray.png", img_1024, gil::png_tag{});
+        gil::read_image("resize_2048_gray.png", img_2048, gil::png_tag{});
+
+        this -> img_out_256.recreate(this -> img_256.dimensions());
+        this -> img_out_512.recreate(this -> img_512.dimensions());
+        this -> img_out_1024.recreate(this -> img_1024.dimensions());
+        this -> img_out_2048.recreate(this -> img_2048.dimensions());
+
+        this -> img_out1_256.recreate(this -> img_256.dimensions());
+        this -> img_out1_512.recreate(this -> img_512.dimensions());
+        this -> img_out1_1024.recreate(this -> img_1024.dimensions());
+        this -> img_out1_2048.recreate(this -> img_2048.dimensions());
     }
-    gil::gray8_image_t img;
-    gil::gray8_image_t img_out, img_out1;
+    gil::gray8_image_t img_32, img_256, img_512, img_1024, img_2048;
+    gil::gray8_image_t img_out_32, img_out_256, img_out_512, img_out_1024, img_out_2048;
+    gil::gray8_image_t img_out1_32, img_out1_256, img_out1_512, img_out1_1024, img_out1_2048;
     std::vector<float> v{std::vector<float>(9, 1.0f / 9.0f)};
     gil::detail::kernel_2d<float> kernel{gil::detail::kernel_2d<float>(v.begin(), v.size(), 1, 1)};
 };
@@ -40,18 +49,28 @@ constexpr int samples = 1;
 constexpr int iterations = 1;
 #endif
 
-BASELINE_F(HistogramGray8, 1d_raw_pointer, RandomImageGray8Fixture, samples, iterations)
+BASELINE_F(Convolve2D, 1d_raw_pointer, RandomImageGray8Fixture, samples, iterations)
 {
-    // gil::detail::convolve_2d(gil::const_view(this -> img), this -> kernel, 
-    //     gil::view(this -> img_out));
-    gil::detail::correlate_2d(gil::const_view(this -> img), this -> kernel, 
-        gil::view(this -> img_out));
+    gil::detail::correlate_2d(gil::const_view(this -> img_256), this -> kernel, 
+        gil::view(this -> img_out_256));
+    // gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
+    //     gil::view(this -> img_out_512));
+    // gil::detail::correlate_2d(gil::const_view(this -> img_1024), this -> kernel, 
+    //     gil::view(this -> img_out_1024));
+    // gil::detail::correlate_2d(gil::const_view(this -> img_2048), this -> kernel, 
+    //     gil::view(this -> img_out_2048));
 }
 
-BENCHMARK_F(HistogramGray8, 1d_raw_pointer_1, RandomImageGray8Fixture, samples, iterations)
+BENCHMARK_F(Convolve2D, 1d_raw_pointer_1, RandomImageGray8Fixture, samples, iterations)
 {
-    gil::detail::image_correlate(gil::const_view(this -> img), this -> v, 
-        gil::view(this -> img_out1));
+    gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
+        gil::view(this -> img_out1_256));
+    // gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
+    //     gil::view(this -> img_out1_512));
+    // gil::detail::image_correlate(gil::const_view(this -> img_1024), this -> kernel, 
+    //     gil::view(this -> img_out1_1024));
+    // gil::detail::image_correlate(gil::const_view(this -> img_2048), this -> kernel, 
+    //     gil::view(this -> img_out1_2048));
 }
 
 CELERO_MAIN

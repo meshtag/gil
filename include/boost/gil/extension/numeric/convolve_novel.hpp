@@ -142,7 +142,7 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
 
     for (std::ptrdiff_t row = 1; row < gil::view(img_in_modified).height() - 1; ++row)
     {
-        for (std::ptrdiff_t col = 1; col < gil::view(img_in_modified).width() - 2; ++col)
+        for (std::ptrdiff_t col = 1; col < gil::view(img_in_modified).width() - 1; ++col)
         {
             dst_view(col - 1, row - 1) = image_correlate_impl(buffer, kernel);
 
