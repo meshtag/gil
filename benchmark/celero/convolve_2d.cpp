@@ -19,7 +19,7 @@ public:
 
     void setUp(const celero::TestFixture::ExperimentValue& experimentValue) final
     {
-        gil::read_image("/home/prathamesh/Desktop/Conv_Images/resize_512_gray.png", img, 
+        gil::read_image("resize_512_gray.png", img, 
             gil::png_tag{});
         this -> img_out.recreate((this -> img).dimensions());
         this -> img_out1.recreate((this -> img).dimensions());
@@ -38,13 +38,13 @@ constexpr int samples = 1;
 constexpr int iterations = 1;
 #endif
 
-BASELINE_F(HistogramGray8, 1d_raw_pointer, RandomImageGray8Fixture, samples, iterations)
+BASELINE_F(Convolve2D, 1d_raw_pointer, RandomImageGray8Fixture, samples, iterations)
 {
     gil::detail::correlate_2d(gil::const_view(this -> img), this -> kernel, 
         gil::view(this -> img_out));
 }
 
-BENCHMARK_F(HistogramGray8, 1d_raw_pointer_1, RandomImageGray8Fixture, samples, iterations)
+BENCHMARK_F(Convolve2D, 1d_raw_pointer_1, RandomImageGray8Fixture, samples, iterations)
 {
     gil::detail::image_correlate(gil::const_view(this -> img), this -> v, 
         gil::view(this -> img_out1));
