@@ -38,13 +38,13 @@ constexpr int samples = 1;
 constexpr int iterations = 1;
 #endif
 
-BASELINE_F(Convolve2D, 1d_raw_pointer, RandomImageGray8Fixture, samples, iterations)
+BASELINE_F(Convolve2D, Original_version, RandomImageGray8Fixture, samples, iterations)
 {
     gil::detail::correlate_2d(gil::const_view(this -> img), this -> kernel, 
         gil::view(this -> img_out));
 }
 
-BENCHMARK_F(Convolve2D, 1d_raw_pointer_1, RandomImageGray8Fixture, samples, iterations)
+BENCHMARK_F(Convolve2D, First_modif, RandomImageGray8Fixture, samples, iterations)
 {
     gil::detail::image_correlate(gil::const_view(this -> img), this -> v, 
         gil::view(this -> img_out1));
