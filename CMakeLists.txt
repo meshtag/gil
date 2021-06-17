@@ -83,7 +83,8 @@ target_compile_definitions(gil_compile_options
 add_library(gil_dependencies INTERFACE)
 find_package(Threads)
 target_link_libraries(gil_dependencies INTERFACE Threads::Threads)
-
+find_package (OpenCV 4.0.0 REQUIRED)
+include_directories ("/usr/include/opencv4/")
 #-----------------------------------------------------------------------------
 # Dependency: Boost
 # - look for stage Build

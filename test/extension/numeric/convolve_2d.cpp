@@ -124,50 +124,50 @@ void test_modified_correlate_2d_with_normalized_filter()
 int main()
 {
     test_convolve_2d_with_normalized_mean_filter();
-    test_modified_correlate_2d_with_normalized_filter();
+    // test_modified_correlate_2d_with_normalized_filter();
 
-    // gil::gray8_image_t img_in(5, 5), img_out(5, 5);
-    // for (int i = 0; i < 5; ++i)
-    //     for (int j = 0; j < 5; ++j)
-    //         nth_channel_view(gil::view(img_in), 0)(i, j)[0] = i + j;
+    gil::gray8_image_t img_in(5, 5), img_out(5, 5);
+    for (int i = 0; i < 5; ++i)
+        for (int j = 0; j < 5; ++j)
+            nth_channel_view(gil::view(img_in), 0)(i, j)[0] = i + j;
 
-    // std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
-    // std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 1, 0};
-    // gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
+    std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
+    std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 1, 0};
+    gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
     // for (int i = 0 ; i < 3; ++i)
     // {
     //     for (int j = 0; j < 3; ++j)
     //         std::cout << static_cast<int>(kernel.at(i, j)) << " ";
     //     std::cout << "\n";
     // }
-    // gil::detail::correlate_2d(gil::const_view(img_in), kernel, gil::view(img_out));
+    gil::detail::correlate_2d(gil::const_view(img_in), kernel, gil::view(img_out));
 
-    // for (int i = 0; i < 5; ++i)
-    // {
-    //     for (int j = 0; j < 5; ++j)
-    //         std::cout << static_cast<int>(nth_channel_view(gil::view(img_in), 0)(j, i)[0]) << " ";
-    //     std::cout << "\n";
-    // }
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_in), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
 
-    // std::cout << "\n\n";
+    std::cout << "\n\n";
 
-    // for (int i = 0; i < 5; ++i)
-    // {
-    //     for (int j = 0; j < 5; ++j)
-    //         std::cout << static_cast<int>(nth_channel_view(gil::view(img_out), 0)(j, i)[0]) << " ";
-    //     std::cout << "\n";
-    // }
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_out), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
 
-    // gil::gray8_image_t img_obtained(5, 5);
-    // gil::detail::image_correlate(gil::const_view(img_in), p, gil::view(img_obtained));
+    gil::gray8_image_t img_obtained(5, 5);
+    gil::detail::image_correlate(gil::const_view(img_in), p, gil::view(img_obtained));
 
-    // std::cout << "\n\n";
-    // for (int i = 0; i < 5; ++i)
-    // {
-    //     for (int j = 0; j < 5; ++j)
-    //         std::cout << static_cast<int>(nth_channel_view(gil::view(img_obtained), 0)(j, i)[0]) << " ";
-    //     std::cout << "\n";
-    // }
+    std::cout << "\n\n";
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img_obtained), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
 
     return ::boost::report_errors();
 }
