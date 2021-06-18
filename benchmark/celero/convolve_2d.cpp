@@ -65,7 +65,7 @@ public:
     int ddepth;
     int kernel_size;
     const char* window_name = "filter2D Demo";
-    const char* imageName = "resize_512_gray.png";
+    const char* imageName = "resize_256_gray.png";
 };
 
 #ifdef NDEBUG
