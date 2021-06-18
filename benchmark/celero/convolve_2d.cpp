@@ -76,7 +76,7 @@ constexpr int samples_num = 1;
 constexpr int iterations = 1;
 #endif
 
-BASELINE_F(Convolve2D, Original_version, RandomImageGray8Fixture, samples_num, iterations)
+BASELINE_F(Correlate2D, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
 {
     gil::detail::correlate_2d(gil::const_view(this -> img_256), this -> kernel, 
         gil::view(this -> img_out_256));
@@ -88,7 +88,7 @@ BASELINE_F(Convolve2D, Original_version, RandomImageGray8Fixture, samples_num, i
     //     gil::view(this -> img_out_2048));
 }
 
-BENCHMARK_F(Convolve2D, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+BENCHMARK_F(Correlate2D, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
 {
     gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
         gil::view(this -> img_out1_256));
@@ -100,7 +100,7 @@ BENCHMARK_F(Convolve2D, Second_modif, RandomImageGray8Fixture, samples_num, iter
     //     gil::view(this -> img_out1_2048));
 }
 
-BENCHMARK_F(Convolve2D, Opencv_correlation, RandomImageGray8Fixture, samples_num, iterations)
+BENCHMARK_F(Correlate2D, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
 {
     opencv::filter2D(src, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT );
 }
