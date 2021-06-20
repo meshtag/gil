@@ -137,22 +137,22 @@ int main()
     test_image_5x5_kernel_3x3_identity::run();
     test_check();
 
-    // gil::gray8_image_t img(5, 5);
-    // std::vector<int> vec;
-    // for (int i = 1; i < 26; ++i)
-    //     vec.push_back(i);
-    // for (int i = 0; i < 5; ++i)
-    //     for (int j = 0; j < 5; ++j)
-    //         nth_channel_view(gil::view(img), 0)(j, i)[0] = vec[5 * i + j];
+    gil::gray8_image_t img(5, 5);
+    std::vector<int> vec;
+    for (int i = 1; i < 26; ++i)
+        vec.push_back(i);
+    for (int i = 0; i < 5; ++i)
+        for (int j = 0; j < 5; ++j)
+            nth_channel_view(gil::view(img), 0)(j, i)[0] = vec[5 * i + j];
 
     // auto sub_view = gil::subimage_view(gil::view(img), 0, 0, 3, 3);
 
-    // for (int i = 0; i < 5; ++i)
-    // {
-    //     for (int j = 0; j < 5; ++j)
-    //         std::cout << static_cast<int>(nth_channel_view(gil::view(img), 0)(j, i)[0]) << " ";
-    //     std::cout << "\n";
-    // }
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < 5; ++j)
+            std::cout << static_cast<int>(nth_channel_view(gil::view(img), 0)(j, i)[0]) << " ";
+        std::cout << "\n";
+    }
     // std::cout << "\n\n";
     // for (int i = 0; i < 3; ++i)
     // {

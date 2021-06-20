@@ -166,8 +166,8 @@ int main()
         for (int j = 0; j < 5; ++j)
             nth_channel_view(gil::view(img_in), 0)(i, j)[0] = i + j;
 
-    std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
-    std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 1, 0};
+    std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+    std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
     gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
     // for (int i = 0 ; i < 3; ++i)
     // {
@@ -194,7 +194,7 @@ int main()
     }
 
     gil::gray8_image_t img_obtained(5, 5);
-    gil::detail::image_correlate(gil::const_view(img_in), p, gil::view(img_obtained));
+    // gil::detail::image_correlate(gil::const_view(img_in), p, gil::view(img_obtained));
 
     std::cout << "\n\n";
     for (int i = 0; i < 5; ++i)

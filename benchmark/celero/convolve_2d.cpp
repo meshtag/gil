@@ -41,7 +41,7 @@ public:
         this -> img_out1_2048.recreate(this -> img_2048.dimensions());
 
         // Loads an image
-        src = opencv::imread( opencv::samples::findFile( imageName ), opencv::IMREAD_COLOR ); // Load an image
+        src = opencv::imread( opencv::samples::findFile( imageName ), opencv::IMREAD_COLOR );
         anchor = Point( -1, -1 );
         delta = 0;
         ddepth = -1;
@@ -55,8 +55,8 @@ public:
     gil::gray8_image_t img_32, img_256, img_512, img_1024, img_2048;
     gil::gray8_image_t img_out_32, img_out_256, img_out_512, img_out_1024, img_out_2048;
     gil::gray8_image_t img_out1_32, img_out1_256, img_out1_512, img_out1_1024, img_out1_2048;
-    std::vector<float> v{std::vector<float>(9, 1.0f / 9.0f)};
-    gil::detail::kernel_2d<float> kernel{gil::detail::kernel_2d<float>(v.begin(), v.size(), 1, 1)};
+    std::vector<float> v{std::vector<float>(49, 1.0f / 49.0f)};
+    gil::detail::kernel_2d<float> kernel{gil::detail::kernel_2d<float>(v.begin(), v.size(), 3, 3)};
 
     opencv::Mat src, dst;
     opencv::Mat kernel1;
@@ -65,7 +65,7 @@ public:
     int ddepth;
     int kernel_size;
     const char* window_name = "filter2D Demo";
-    const char* imageName = "resize_256_gray.png";
+    const char* imageName = "resize_512_gray.png";
 };
 
 #ifdef NDEBUG
@@ -78,10 +78,10 @@ constexpr int iterations = 1;
 
 BASELINE_F(Correlate2D, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
 {
-    gil::detail::correlate_2d(gil::const_view(this -> img_256), this -> kernel, 
-        gil::view(this -> img_out_256));
-    // gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
-    //     gil::view(this -> img_out_512));
+    // gil::detail::correlate_2d(gil::const_view(this -> img_256), this -> kernel, 
+    //     gil::view(this -> img_out_256));
+    gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
+        gil::view(this -> img_out_512));
     // gil::detail::correlate_2d(gil::const_view(this -> img_1024), this -> kernel, 
     //     gil::view(this -> img_out_1024));
     // gil::detail::correlate_2d(gil::const_view(this -> img_2048), this -> kernel, 
@@ -90,10 +90,10 @@ BASELINE_F(Correlate2D, Gil_version, RandomImageGray8Fixture, samples_num, itera
 
 BENCHMARK_F(Correlate2D, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
 {
-    gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
-        gil::view(this -> img_out1_256));
-    // gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
-    //     gil::view(this -> img_out1_512));
+    // gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
+    //     gil::view(this -> img_out1_256));
+    gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
+        gil::view(this -> img_out1_512));
     // gil::detail::image_correlate(gil::const_view(this -> img_1024), this -> kernel, 
     //     gil::view(this -> img_out1_1024));
     // gil::detail::image_correlate(gil::const_view(this -> img_2048), this -> kernel, 
