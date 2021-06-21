@@ -113,10 +113,7 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
 
     auto src_sub_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 0, 0, 
         kernel_dimension, kernel_dimension));
-
-    for (std::ptrdiff_t row = 0; row < src_sub_view.height(); ++row)
-        for (std::ptrdiff_t col = 0; col < src_sub_view.width(); ++col)
-            buffer[kernel_dimension * row + col] = src_sub_view(col, row);
+    std::copy(src_sub_view.begin(), src_sub_view.end(), buffer.begin());
 
     for (std::ptrdiff_t row = 1; row < gil::view(img_in_modified).height() - 1; ++row)
     {
@@ -126,19 +123,16 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
 
             std::rotate(buffer.begin(), buffer.begin() + kernel_dimension, buffer.end());
 
-            src_sub_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 
-                col, row - 1, kernel_dimension, kernel_dimension));
-
-            for (std::ptrdiff_t col = 0; col < src_sub_view.width(); ++col)
-                buffer[(kernel_dimension - 1) * kernel_dimension + col] = src_sub_view(col, kernel_dimension - 1);
-
+            for (std::ptrdiff_t temp_row = row - 1; temp_row < row - 1 + kernel_dimension;
+                ++temp_row)
+            {
+                buffer[(kernel_dimension - 1) * kernel_dimension + temp_row - row + 1] = 
+                    gil::view(img_in_modified)(col + kernel_dimension - 1, temp_row);
+            }
         }
-        auto src_sub_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 0,
-            row, kernel_dimension, kernel_dimension));
-
-        for (std::ptrdiff_t row = 0; row < src_sub_view.height(); ++row)
-            for (std::ptrdiff_t col = 0; col < src_sub_view.width(); ++col)
-                buffer[kernel_dimension * row + col] = src_sub_view(col, row);
+        auto src_sub_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 0, row, 
+            kernel_dimension, kernel_dimension));
+        std::copy(src_sub_view.begin(), src_sub_view.end(), buffer.begin());
     }
 
 }

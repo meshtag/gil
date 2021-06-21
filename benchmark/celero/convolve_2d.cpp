@@ -55,7 +55,7 @@ public:
     gil::gray8_image_t img_32, img_256, img_512, img_1024, img_2048;
     gil::gray8_image_t img_out_32, img_out_256, img_out_512, img_out_1024, img_out_2048;
     gil::gray8_image_t img_out1_32, img_out1_256, img_out1_512, img_out1_1024, img_out1_2048;
-    std::vector<float> v{std::vector<float>(49, 1.0f / 49.0f)};
+    std::vector<float> v{std::vector<float>(9, 1.0f / 9.0f)};
     gil::detail::kernel_2d<float> kernel{gil::detail::kernel_2d<float>(v.begin(), v.size(), 3, 3)};
 
     opencv::Mat src, dst;
@@ -88,17 +88,17 @@ BASELINE_F(Correlate2D, Gil_version, RandomImageGray8Fixture, samples_num, itera
     //     gil::view(this -> img_out_2048));
 }
 
-BENCHMARK_F(Correlate2D, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
-{
-    // gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
-    //     gil::view(this -> img_out1_256));
-    gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
-        gil::view(this -> img_out1_512));
-    // gil::detail::image_correlate(gil::const_view(this -> img_1024), this -> kernel, 
-    //     gil::view(this -> img_out1_1024));
-    // gil::detail::image_correlate(gil::const_view(this -> img_2048), this -> kernel, 
-    //     gil::view(this -> img_out1_2048));
-}
+// BENCHMARK_F(Correlate2D, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+// {
+//     // gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
+//     //     gil::view(this -> img_out1_256));
+//     gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
+//         gil::view(this -> img_out1_512));
+//     // gil::detail::image_correlate(gil::const_view(this -> img_1024), this -> kernel, 
+//     //     gil::view(this -> img_out1_1024));
+//     // gil::detail::image_correlate(gil::const_view(this -> img_2048), this -> kernel, 
+//     //     gil::view(this -> img_out1_2048));
+// }
 
 BENCHMARK_F(Correlate2D, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
 {
