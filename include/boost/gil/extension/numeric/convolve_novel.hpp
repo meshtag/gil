@@ -86,8 +86,7 @@ void correlate_2d(SrcView const& src_view, Kernel const& kernel, DstView const& 
 
 
 template <typename SrcView>
-auto image_correlate_impl(SrcView src_view, std::vector<float> kernel) 
-    -> float
+auto image_correlate_impl(SrcView src_view, std::vector<float> kernel) -> float
 {
     using pixel_t = typename SrcView::value_type;
     pixel_t zero_pixel;
@@ -116,30 +115,6 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
         kernel_dimension, kernel_dimension));
     std::copy(src_sub_view.begin(), src_sub_view.end(), buffer.begin());
 
-
-    /*Debug*/
-    // std::cout << "1st view \n";
-    // for (int i = 0; i < 3; ++i)
-    // {
-    //     for (int j = 0; j < 3; ++j)
-    //         std::cout << static_cast<int>(src_sub_view(j, i)[0]) << " ";
-    //     std::cout << "\n\n";
-    // }
-
-    // for (int i = 0; i < 7; ++i)
-    // {
-    //     for (int j = 0; j < 7; ++j)
-    //         std::cout << static_cast<int>(nth_channel_view(gil::view(img_in_modified), 0)(j, i)[0]) << " ";
-    //     std::cout << "\n";
-    // }
-
-    // std::cout << "1st buffer  ";
-    // for (auto b : buffer)
-    //     std::cout << static_cast<int>(b) << " ";
-    // std::cout << "\n";
-    /*Debug*/
-
-
     for (std::ptrdiff_t row = 1; row < gil::view(img_in_modified).height() - 1; ++row)
     {
         for (std::ptrdiff_t col = 1; col < gil::view(img_in_modified).width() - 1; ++col)
@@ -148,35 +123,12 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
 
             std::rotate(buffer.begin(), buffer.begin() + kernel_dimension, buffer.end());
 
-            src_sub_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 
-                col, row - 1, kernel_dimension, kernel_dimension));
-
-            std::copy(src_sub_view.begin() + 2 * kernel_dimension, src_sub_view.end(), 
-                buffer.begin() + 2 * kernel_dimension);
-
-            /*Debug*/
-            // if (!(row == 1 && col == 0)) {
-            // // std::cout << "src_sub_view  ";
-            // // for (auto p : src_sub_view)
-            // //     std::cout << static_cast<int>(p) << " ";
-            // // std::cout << "\n\n";
-
-            // std::cout << "src_sub_view  \n";
-            // for (int i = 0; i < 3; ++i)
-            // {
-            //     for (int j = 0; j < 3; ++j)
-            //         std::cout << static_cast<int>(src_sub_view(j, i)[0]) << " ";
-            //     std::cout << "\n";
-            // }
-
-            
-            // std::cout << "buffer  "; 
-            // for (auto b : buffer)
-            //     std::cout << static_cast<int>(b) << " ";
-            // std::cout << "\n\n";
-            // }
-            /*Debug*/
-
+            for (std::ptrdiff_t temp_row = row - 1; temp_row < row - 1 + kernel_dimension;
+                ++temp_row)
+            {
+                buffer[(kernel_dimension - 1) * kernel_dimension + temp_row - row + 1] = 
+                    gil::view(img_in_modified)(col + kernel_dimension - 1, temp_row);
+            }
         }
         auto src_sub_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 0, row, 
             kernel_dimension, kernel_dimension));
