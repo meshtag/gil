@@ -88,31 +88,32 @@ void test_convolve_2d_with_normalized_mean_filter()
 void test_modified_correlate2D()
 {
     gil::gray8_image_t img_in_512;
-    gil::read_image("resize_32_gray.png", img_in_512, gil::png_tag{});
+    gil::read_image("resize_256_gray.png", img_in_512, gil::png_tag{});
     gil::gray8_image_t img_out_512(img_in_512.width(), img_in_512.height());
 
-    std::vector<float> v(9, 1.0f / 9.0f);
+    // std::vector<float> v(9, 1.0f / 9.0f);
+    std::vector<float> v = {1, 1, 1, 1, 1, 1, 1, 1, 1};
     gil::detail::kernel_2d<float> kernel{gil::detail::kernel_2d<float>(v.begin(), v.size(), 1, 1)};
 
     gil::detail::correlate_2d(gil::view(img_in_512), kernel, gil::view(img_out_512));
 
-    // for (std::ptrdiff_t row = 0; row < gil::view(img_out_512).height(); ++row)
-    // {
-    //     for (std::ptrdiff_t col = 0; col < gil::view(img_out_512).width(); ++col)
-    //         std::cout << static_cast<int>(gil::view(img_out_512)(col, row)) << " ";
-    //     std::cout << "\n";
-    // }
-    // std::cout << "\n\n";
+    for (std::ptrdiff_t row = 110; row < 225; ++row)
+    {
+        for (std::ptrdiff_t col = 110; col < 225; ++col)
+            std::cout << static_cast<int>(gil::view(img_out_512)(col, row)) << " ";
+        std::cout << "\n";
+    }
+    std::cout << "\n\n";
 
     gil::gray8_image_t img_expected_out_512(img_in_512.width(), img_in_512.height());
     gil::detail::image_correlate(gil::view(img_in_512), v, gil::view(img_expected_out_512));
 
-    // for (std::ptrdiff_t row = 0; row < gil::view(img_expected_out_512).height(); ++row)
-    // {
-    //     for (std::ptrdiff_t col = 0; col < gil::view(img_expected_out_512).width(); ++col)
-    //         std::cout << static_cast<int>(gil::view(img_expected_out_512)(col, row)) << " ";
-    //     std::cout << "\n";
-    // }
+    for (std::ptrdiff_t row = 110; row < 225; ++row)
+    {
+        for (std::ptrdiff_t col = 110; col < 225; ++col)
+            std::cout << static_cast<float>(gil::view(img_expected_out_512)(col, row)) << " ";
+        std::cout << "\n";
+    }
 
     BOOST_TEST(gil::equal_pixels(gil::view(img_out_512), gil::view(img_expected_out_512)));
 

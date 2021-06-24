@@ -87,7 +87,6 @@ void correlate_2d(SrcView const& src_view, Kernel const& kernel, DstView const& 
 template <typename SrcView, typename DstView>
 void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_view) 
 {
-    std::cout << "reached here\n\n";
     long long kernel_dimension = std::sqrt(kernel.size());
     auto img_in_modified_col = gil::extend_col(src_view, kernel_dimension / 2,
         gil::boundary_option::extend_zero);
@@ -126,6 +125,9 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
         // for (int i = 0; i < buffer.size(); ++i)
         //     std::cout << static_cast<int>(buffer[i]) << " ";
         // std::cout << "\n\n";
+        // for (int i = 0; i < kernel.size(); ++i)
+        //     std::cout << kernel[i] << " ";
+        // std::cout << "\n";
         /*Debug*/
 
         for (std::ptrdiff_t index = 0; index < buffer.size() - kernel.size(); 
@@ -133,13 +135,14 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
         {
             if (col < dst_view.width() && row < dst_view.height())
             {
-                auto p = std::inner_product(buffer.begin() + index, 
+                dst_view(col, row) = std::inner_product(buffer.begin() + index, 
                     buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
                     gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
                     gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
                 ++col;
-
-                std::cout << static_cast<int>(p) << " ";
+                // nth_channel_view(dst_view, 0)(col, row)[0] = 9.1f;
+                // std::cout << static_cast<float>(dst_view(col, row)) << " ";
+                // std::cout << static_cast<int>(p) << " ";
                 // std::cout << std::inner_product(buffer.begin() + index, 
                 //     buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
                 //     gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
@@ -147,7 +150,7 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
                 // std::cout << static_cast<int>(dst_view(col, row)) << " ";
             }
         }
-        std::cout << "\n";
+        // std::cout << "\n";
 
     }
 
