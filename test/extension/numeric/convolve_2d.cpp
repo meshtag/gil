@@ -32,6 +32,9 @@
 #include "/usr/include/opencv4/opencv2/imgproc.hpp"
 #include "/usr/include/opencv4/opencv2/imgcodecs.hpp"
 #include "/usr/include/opencv4/opencv2/highgui.hpp"
+
+#include <boost/gil/extension/io/png.hpp>
+
 using namespace cv;
 
 namespace gil = boost::gil;
@@ -82,89 +85,46 @@ void test_convolve_2d_with_normalized_mean_filter()
     BOOST_TEST(gil::equal_pixels(out_view, dst_view));
 }
 
-void test_modified_correlate_2d_with_normalized_filter()
+void test_modified_correlate2D()
 {
-    gil::gray8c_view_t src_view =
-        gil::interleaved_view(9, 9, reinterpret_cast<const gil::gray8_pixel_t*>(img), 9);
+    gil::gray8_image_t img_in_512;
+    gil::read_image("resize_32_gray.png", img_in_512, gil::png_tag{});
+    gil::gray8_image_t img_out_512(img_in_512.width(), img_in_512.height());
 
-    gil::image<gil::gray8_pixel_t> temp_img(src_view.width(), src_view.height());
-    typename gil::image<gil::gray8_pixel_t>::view_t temp_view = view(temp_img);
-    gil::gray8_view_t dst_view(temp_view);
+    std::vector<float> v{std::vector<float>(9, 1.0f / 9.0f)};
+    gil::detail::kernel_2d<float> kernel{gil::detail::kernel_2d<float>(v.begin(), v.size(), 3, 3)};
 
-    std::vector<float> v(9, 1.0f / 9.0f);
-    gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
+    gil::detail::correlate_2d(gil::view(img_in_512), kernel, gil::view(img_out_512));
 
-    // gil::detail::correlate_2d(src_view, kernel, dst_view);
-    gil::detail::image_correlate(src_view, v, dst_view);
+    for (std::ptrdiff_t row = 0; row < gil::view(img_out_512).height(); ++row)
+    {
+        for (std::ptrdiff_t col = 0; col < gil::view(img_out_512).width(); ++col)
+            std::cout << static_cast<int>(gil::view(img_out_512)(col, row)) << " ";
+        std::cout << "\n";
+    }
+    std::cout << "\n\n";
 
-    gil::gray8c_view_t out_view =
-        gil::interleaved_view(9, 9, reinterpret_cast<const gil::gray8_pixel_t*>(output), 9);
+    gil::gray8_image_t img_expected_out_512(img_in_512.width(), img_in_512.height());
+    gil::detail::image_correlate(gil::view(img_in_512), kernel, gil::view(img_expected_out_512));
 
-    /*Debug*/
-    // for (std::ptrdiff_t row = 0; row < src_view.height(); ++row)
-    // {
-    //     for (std::ptrdiff_t col = 0; col < src_view.width(); ++col)
-    //         std::cout << static_cast<int>(src_view(col, row)[0]) << " ";
-    //     std::cout << "\n";
-    // }
-    // std::cout << "\n\n";
-    // for (std::ptrdiff_t row = 0; row < out_view.height(); ++row)
-    // {
-    //     for (std::ptrdiff_t col = 0; col < out_view.width(); ++col)
-    //         std::cout << static_cast<int>(out_view(col, row)[0]) << " ";
-    //     std::cout << "\n";
-    // }
-    // std::cout << "\n\n";
-    // for (std::ptrdiff_t row = 0; row < dst_view.height(); ++row)
-    // {
-    //     for (std::ptrdiff_t col = 0; col < dst_view.width(); ++col)
-    //         std::cout << static_cast<int>(dst_view(col, row)[0]) << " ";
-    //     std::cout << "\n";
-    // }
-    /*Debug*/
+    for (std::ptrdiff_t row = 0; row < gil::view(img_expected_out_512).height(); ++row)
+    {
+        for (std::ptrdiff_t col = 0; col < gil::view(img_expected_out_512).width(); ++col)
+            std::cout << static_cast<int>(gil::view(img_expected_out_512)(col, row)) << " ";
+        std::cout << "\n";
+    }
 
-    BOOST_TEST(gil::equal_pixels(out_view, dst_view));
+    BOOST_TEST(gil::equal_pixels(gil::view(img_out_512), gil::view(img_expected_out_512)));
+
 }
 
-// void test_with_opencv()
-// {
-//     // Declare variables
-//     Mat src, dst;
-//     Mat kernel;
-//     Point anchor;
-//     double delta;
-//     int ddepth;
-//     int kernel_size;
-//     const char* window_name = "filter2D Demo";
-//     const char* imageName = "/home/prathamesh/Desktop/Conv_Images/resize_2048_gray.png";
-//     // Loads an image
-//     src = imread( samples::findFile( imageName ), IMREAD_COLOR ); // Load an image
-
-//     // Initialize arguments for the filter
-//     anchor = Point( -1, -1 );
-//     delta = 0;
-//     ddepth = -1;
-//     // Loop - Will filter the image with different kernel sizes each 0.5 seconds
-//     int ind = 0;
-//     // Update kernel size for a normalized box filter
-//     kernel_size = 3 ;
-//     kernel = Mat::ones( kernel_size, kernel_size, CV_32F )/ (float)(kernel_size*kernel_size);
-//     // Apply filter
-//     filter2D(src, dst, ddepth , kernel, anchor, delta, BORDER_DEFAULT );
-//     imshow( window_name, dst );
-//     char c = (char)waitKey(5000);
-//     // Press 'ESC' to exit the program
-// }
-
-int main()
+void basic_test()
 {
-    test_convolve_2d_with_normalized_mean_filter();
-    // test_modified_correlate_2d_with_normalized_filter();
-
     gil::gray8_image_t img_in(5, 5), img_out(5, 5);
+    int pixel = 0;
     for (int i = 0; i < 5; ++i)
         for (int j = 0; j < 5; ++j)
-            nth_channel_view(gil::view(img_in), 0)(i, j)[0] = i + j;
+            nth_channel_view(gil::view(img_in), 0)(i, j)[0] = pixel++;
 
     std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
     std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 1, 0};
@@ -203,6 +163,13 @@ int main()
             std::cout << static_cast<int>(nth_channel_view(gil::view(img_obtained), 0)(j, i)[0]) << " ";
         std::cout << "\n";
     }
+}
+
+int main()
+{
+    test_convolve_2d_with_normalized_mean_filter();
+    // test_modified_correlate2D();
+    basic_test();
 
     return ::boost::report_errors();
 }

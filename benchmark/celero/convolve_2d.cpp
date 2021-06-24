@@ -65,7 +65,7 @@ public:
     int ddepth;
     int kernel_size;
     const char* window_name = "filter2D Demo";
-    const char* imageName = "resize_512_gray.png";
+    const char* imageName = "resize_1024_gray.png";
 };
 
 #ifdef NDEBUG
@@ -80,25 +80,25 @@ BASELINE_F(Correlate2D, Gil_version, RandomImageGray8Fixture, samples_num, itera
 {
     // gil::detail::correlate_2d(gil::const_view(this -> img_256), this -> kernel, 
     //     gil::view(this -> img_out_256));
-    gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
-        gil::view(this -> img_out_512));
-    // gil::detail::correlate_2d(gil::const_view(this -> img_1024), this -> kernel, 
-    //     gil::view(this -> img_out_1024));
+    // gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
+    //     gil::view(this -> img_out_512));
+    gil::detail::correlate_2d(gil::const_view(this -> img_1024), this -> kernel, 
+        gil::view(this -> img_out_1024));
     // gil::detail::correlate_2d(gil::const_view(this -> img_2048), this -> kernel, 
     //     gil::view(this -> img_out_2048));
 }
 
-// BENCHMARK_F(Correlate2D, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
-// {
-//     // gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
-//     //     gil::view(this -> img_out1_256));
-//     gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
-//         gil::view(this -> img_out1_512));
-//     // gil::detail::image_correlate(gil::const_view(this -> img_1024), this -> kernel, 
-//     //     gil::view(this -> img_out1_1024));
-//     // gil::detail::image_correlate(gil::const_view(this -> img_2048), this -> kernel, 
-//     //     gil::view(this -> img_out1_2048));
-// }
+BENCHMARK_F(Correlate2D, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+{
+    // gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
+    //     gil::view(this -> img_out1_256));
+    // gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
+    //     gil::view(this -> img_out1_512));
+    gil::detail::image_correlate(gil::const_view(this -> img_1024), this -> kernel, 
+        gil::view(this -> img_out1_1024));
+    // gil::detail::image_correlate(gil::const_view(this -> img_2048), this -> kernel, 
+    //     gil::view(this -> img_out1_2048));
+}
 
 BENCHMARK_F(Correlate2D, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
 {

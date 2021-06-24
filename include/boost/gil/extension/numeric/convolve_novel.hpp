@@ -84,21 +84,6 @@ void correlate_2d(SrcView const& src_view, Kernel const& kernel, DstView const& 
     }
 }
 
-
-template <typename SrcView>
-auto image_correlate_impl(SrcView src_view, std::vector<float> kernel) -> float
-{
-    using pixel_t = typename SrcView::value_type;
-    pixel_t zero_pixel;
-    pixel_zeros_t<pixel_t>()(zero_pixel);
-
-    float ans = std::inner_product(src_view.begin(), src_view.end(),
-                    kernel.begin(), zero_pixel, gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(),
-                    gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
-
-    return ans;
-}
-
 template <typename SrcView, typename DstView>
 void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_view) 
 {
@@ -109,31 +94,54 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
         gil::boundary_option::extend_zero);
 
     using pixel_t = typename SrcView::value_type;
-    std::vector<pixel_t> buffer(kernel.size());
+    pixel_t zero_pixel;
+    pixel_zeros_t<pixel_t>()(zero_pixel);
 
-    auto src_sub_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 0, 0, 
-        kernel_dimension, kernel_dimension));
-    std::copy(src_sub_view.begin(), src_sub_view.end(), buffer.begin());
+    using pixel_t = typename SrcView::value_type;
+    std::vector<pixel_t> buffer(kernel_dimension * gil::view(img_in_modified).width());
 
-    for (std::ptrdiff_t row = 1; row < gil::view(img_in_modified).height() - 1; ++row)
+    /*Debug*/
+    // std::cout << "\n\n";
+    // for (std::ptrdiff_t row = 0; row < gil::view(img_in_modified).height(); ++row)
+    // {
+    //     for (std::ptrdiff_t col = 0; col < gil::view(img_in_modified).width(); ++col)
+    //         std::cout << static_cast<int>(gil::view(img_in_modified)(col, row)) << " ";
+    //     std::cout << "\n";
+    // }
+    // std::cout << "\n\n";
+    /*Debug*/
+
+    for (std::ptrdiff_t row = 0; 
+        row <= gil::view(img_in_modified).height() - kernel_dimension; ++row)
     {
-        for (std::ptrdiff_t col = 1; col < gil::view(img_in_modified).width() - 1; ++col)
+        std::ptrdiff_t col = 0;
+        auto buffer_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 
+            0, row, gil::view(img_in_modified).width(), kernel_dimension));
+
+        std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
+
+        /*Debug*/
+        // std::cout << "\n\n";
+        // for (int i = 0; i < buffer.size(); ++i)
+        //     std::cout << static_cast<int>(buffer[i]) << " ";
+        // std::cout << "\n\n";
+        /*Debug*/
+
+        for (std::ptrdiff_t index = 0; index < buffer.size() - kernel.size(); 
+            index += kernel_dimension)
         {
-            dst_view(col - 1, row - 1) = image_correlate_impl(buffer, kernel);
-
-            std::rotate(buffer.begin(), buffer.begin() + kernel_dimension, buffer.end());
-
-            for (std::ptrdiff_t temp_row = row - 1; temp_row < row - 1 + kernel_dimension;
-                ++temp_row)
+            if (col < dst_view.width() && row < dst_view.height())
             {
-                buffer[(kernel_dimension - 1) * kernel_dimension + temp_row - row + 1] = 
-                    gil::view(img_in_modified)(col + kernel_dimension - 1, temp_row);
+                dst_view(col, row) = std::inner_product(buffer.begin() + index, 
+                    buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
+                    gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
+                    gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
+                ++col;
             }
         }
-        auto src_sub_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 0, row, 
-            kernel_dimension, kernel_dimension));
-        std::copy(src_sub_view.begin(), src_sub_view.end(), buffer.begin());
+
     }
+
 
 }
 
