@@ -87,6 +87,7 @@ void correlate_2d(SrcView const& src_view, Kernel const& kernel, DstView const& 
 template <typename SrcView, typename DstView>
 void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_view) 
 {
+    std::cout << "reached here\n\n";
     long long kernel_dimension = std::sqrt(kernel.size());
     auto img_in_modified_col = gil::extend_col(src_view, kernel_dimension / 2,
         gil::boundary_option::extend_zero);
@@ -132,13 +133,21 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
         {
             if (col < dst_view.width() && row < dst_view.height())
             {
-                dst_view(col, row) = std::inner_product(buffer.begin() + index, 
+                auto p = std::inner_product(buffer.begin() + index, 
                     buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
                     gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
                     gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
                 ++col;
+
+                std::cout << static_cast<int>(p) << " ";
+                // std::cout << std::inner_product(buffer.begin() + index, 
+                //     buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
+                //     gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
+                //     gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>()) << " ";
+                // std::cout << static_cast<int>(dst_view(col, row)) << " ";
             }
         }
+        std::cout << "\n";
 
     }
 
