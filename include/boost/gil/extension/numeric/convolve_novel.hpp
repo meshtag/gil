@@ -100,38 +100,16 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
     using pixel_t = typename SrcView::value_type;
     std::vector<pixel_t> buffer(kernel_dimension * gil::view(img_in_modified).width());
 
-    /*Debug*/
-    // std::cout << "\n\n";
-    // for (std::ptrdiff_t row = 0; row < gil::view(img_in_modified).height(); ++row)
-    // {
-    //     for (std::ptrdiff_t col = 0; col < gil::view(img_in_modified).width(); ++col)
-    //         std::cout << static_cast<int>(gil::view(img_in_modified)(col, row)) << " ";
-    //     std::cout << "\n";
-    // }
-    // std::cout << "\n\n";
-    /*Debug*/
-
     for (std::ptrdiff_t row = 0; 
         row <= gil::view(img_in_modified).height() - kernel_dimension; ++row)
     {
-        std::ptrdiff_t col = 0;
         auto buffer_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 
             0, row, gil::view(img_in_modified).width(), kernel_dimension));
 
         std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
 
-        /*Debug*/
-        // std::cout << "\n\n";
-        // for (int i = 0; i < buffer.size(); ++i)
-        //     std::cout << static_cast<int>(buffer[i]) << " ";
-        // std::cout << "\n\n";
-        // for (int i = 0; i < kernel.size(); ++i)
-        //     std::cout << kernel[i] << " ";
-        // std::cout << "\n";
-        /*Debug*/
-
-        for (std::ptrdiff_t index = 0; index < buffer.size() - kernel.size(); 
-            index += kernel_dimension)
+        for (std::ptrdiff_t index = 0, col = 0; index < buffer.size() - kernel.size(); 
+            index += kernel_dimension, ++col)
         {
             if (col < dst_view.width() && row < dst_view.height())
             {
@@ -139,22 +117,9 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
                     buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
                     gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
                     gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
-                ++col;
-                // nth_channel_view(dst_view, 0)(col, row)[0] = 9.1f;
-                // std::cout << static_cast<float>(dst_view(col, row)) << " ";
-                // std::cout << static_cast<int>(p) << " ";
-                // std::cout << std::inner_product(buffer.begin() + index, 
-                //     buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
-                //     gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
-                //     gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>()) << " ";
-                // std::cout << static_cast<int>(dst_view(col, row)) << " ";
             }
         }
-        // std::cout << "\n";
-
     }
-
-
 }
 
 } } } // namespace boost::gil::detail

@@ -20,28 +20,35 @@ namespace gil = boost::gil;
 class RandomImageGray8Fixture : public celero::TestFixture
 {
 public:
-    RandomImageGray8Fixture() 
-    { }
+    // RandomImageGray8Fixture() 
+    // { }
 
     void setUp(const celero::TestFixture::ExperimentValue& experimentValue) final
     {
+        gil::read_image("resize_32_gray.png", img_32, gil::png_tag{});
         gil::read_image("resize_256_gray.png", img_256, gil::png_tag{});
         gil::read_image("resize_512_gray.png", img_512, gil::png_tag{});
         gil::read_image("resize_1024_gray.png", img_1024, gil::png_tag{});
         gil::read_image("resize_2048_gray.png", img_2048, gil::png_tag{});
 
+        this -> img_out_32.recreate(this -> img_32.dimensions());
         this -> img_out_256.recreate(this -> img_256.dimensions());
         this -> img_out_512.recreate(this -> img_512.dimensions());
         this -> img_out_1024.recreate(this -> img_1024.dimensions());
         this -> img_out_2048.recreate(this -> img_2048.dimensions());
 
+        this -> img_out1_32.recreate(this -> img_32.dimensions());
         this -> img_out1_256.recreate(this -> img_256.dimensions());
         this -> img_out1_512.recreate(this -> img_512.dimensions());
         this -> img_out1_1024.recreate(this -> img_1024.dimensions());
         this -> img_out1_2048.recreate(this -> img_2048.dimensions());
 
         // Loads an image
-        src = opencv::imread( opencv::samples::findFile( imageName ), opencv::IMREAD_COLOR );
+        src_32 = opencv::imread(opencv::samples::findFile( imageName_32), opencv::IMREAD_COLOR);
+        src_256 = opencv::imread(opencv::samples::findFile( imageName_256), opencv::IMREAD_COLOR);
+        src_512 = opencv::imread(opencv::samples::findFile( imageName_512), opencv::IMREAD_COLOR);
+        src_1024 = opencv::imread(opencv::samples::findFile( imageName_1024), opencv::IMREAD_COLOR);
+        src_2048 = opencv::imread(opencv::samples::findFile( imageName_2048), opencv::IMREAD_COLOR);
         anchor = Point( -1, -1 );
         delta = 0;
         ddepth = -1;
@@ -58,14 +65,18 @@ public:
     std::vector<float> v = {1, 1, 1, 1, 1, 1, 1, 1, 1};
     gil::detail::kernel_2d<float> kernel{gil::detail::kernel_2d<float>(v.begin(), v.size(), 1, 1)};
 
-    opencv::Mat src, dst;
+    opencv::Mat src_32, src_256, src_512, src_1024, src_2048, dst;
     opencv::Mat kernel1;
     opencv::Point anchor;
     double delta;
     int ddepth;
     int kernel_size;
     const char* window_name = "filter2D Demo";
-    const char* imageName = "resize_256_gray.png";
+    const char* imageName_32 = "resize_32_gray.png";
+    const char* imageName_256 = "resize_256_gray.png";
+    const char* imageName_512 = "resize_512_gray.png";
+    const char* imageName_1024 = "resize_1024_gray.png";
+    const char* imageName_2048 = "resize_2048_gray.png";
 };
 
 #ifdef NDEBUG
@@ -76,33 +87,89 @@ constexpr int samples_num = 1;
 constexpr int iterations = 1;
 #endif
 
-BASELINE_F(Correlate2D, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
+BASELINE_F(Correlate2D_32, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    gil::detail::correlate_2d(gil::const_view(this -> img_32), this -> kernel, 
+        gil::view(this -> img_out_32));
+}
+
+BENCHMARK_F(Correlate2D_32, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+{
+    gil::detail::image_correlate(gil::const_view(this -> img_32), this -> kernel, 
+        gil::view(this -> img_out1_32));
+}
+
+BENCHMARK_F(Correlate2D_32, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    opencv::filter2D(src_32, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
+}
+
+BASELINE_F(Correlate2D_256, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
 {
     gil::detail::correlate_2d(gil::const_view(this -> img_256), this -> kernel, 
         gil::view(this -> img_out_256));
-    // gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
-    //     gil::view(this -> img_out_512));
-    // gil::detail::correlate_2d(gil::const_view(this -> img_1024), this -> kernel, 
-    //     gil::view(this -> img_out_1024));
-    // gil::detail::correlate_2d(gil::const_view(this -> img_2048), this -> kernel, 
-    //     gil::view(this -> img_out_2048));
 }
 
-BENCHMARK_F(Correlate2D, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+BENCHMARK_F(Correlate2D_256, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
 {
     gil::detail::image_correlate(gil::const_view(this -> img_256), this -> kernel, 
         gil::view(this -> img_out1_256));
-    // gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
-    //     gil::view(this -> img_out1_512));
-    // gil::detail::image_correlate(gil::const_view(this -> img_1024), this -> v, 
-    //     gil::view(this -> img_out1_1024));
-    // gil::detail::image_correlate(gil::const_view(this -> img_2048), this -> kernel, 
-    //     gil::view(this -> img_out1_2048));
 }
 
-BENCHMARK_F(Correlate2D, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
+BENCHMARK_F(Correlate2D_256, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
 {
-    opencv::filter2D(src, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT );
+    opencv::filter2D(src_256, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
+}
+
+// BENCHMARK_F(Correlate2D_512, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
+// {
+//     gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
+//         gil::view(this -> img_out_512));
+// }
+
+// BENCHMARK_F(Correlate2D_512, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+// {
+//     gil::detail::image_correlate(gil::const_view(this -> img_512), this -> kernel, 
+//         gil::view(this -> img_out1_512));
+// }
+
+// BENCHMARK_F(Correlate2D_512, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
+// {
+//     opencv::filter2D(src_512, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
+// }
+
+BASELINE_F(Correlate2D_1024, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    gil::detail::correlate_2d(gil::const_view(this -> img_1024), this -> kernel, 
+        gil::view(this -> img_out_1024));
+}
+
+BENCHMARK_F(Correlate2D_1024, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+{
+    gil::detail::image_correlate(gil::const_view(this -> img_1024), this -> v, 
+        gil::view(this -> img_out1_1024));
+}
+
+BENCHMARK_F(Correlate2D_1024, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    opencv::filter2D(src_1024, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
+}
+
+BASELINE_F(Correlate2D_2048, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    gil::detail::correlate_2d(gil::const_view(this -> img_2048), this -> kernel, 
+        gil::view(this -> img_out_2048));
+}
+
+BENCHMARK_F(Correlate2D_2048, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+{
+    gil::detail::image_correlate(gil::const_view(this -> img_2048), this -> kernel, 
+        gil::view(this -> img_out1_2048));
+}
+
+BENCHMARK_F(Correlate2D_2048, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    opencv::filter2D(src_2048, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
 }
 
 CELERO_MAIN
