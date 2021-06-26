@@ -97,35 +97,10 @@ void test_modified_correlate2D()
 
     gil::detail::correlate_2d(gil::view(img_in_512), kernel, gil::view(img_out_512));
 
-    for (std::ptrdiff_t row = 0; row < 16; ++row)
-    {
-        for (std::ptrdiff_t col = 0; col < 16; ++col)
-            std::cout << static_cast<int>(gil::view(img_out_512)(col, row)) << " ";
-        std::cout << "\n";
-    }
-    std::cout << "\n\n";
-
     gil::gray8_image_t img_expected_out_512(img_in_512.width(), img_in_512.height());
     gil::detail::image_correlate(gil::view(img_in_512), v, gil::view(img_expected_out_512));
 
-    for (std::ptrdiff_t row = 0; row < 16; ++row)
-    {
-        for (std::ptrdiff_t col = 0; col < 16; ++col)
-            std::cout << static_cast<float>(gil::view(img_expected_out_512)(col, row)) << " ";
-        std::cout << "\n";
-    }
-
-    for (std::ptrdiff_t row = 0; row < 256; ++row)
-    {
-        for (std::ptrdiff_t col = 0; col < 256; ++col)
-        {
-            auto a = gil::view(img_out_512)(col, row);
-            auto b = gil::view(img_expected_out_512)(col, row);
-            if (a != b)
-                std::cout << "Here  " << row << "  " << col << "\n";
-        }
-    }
-    // BOOST_TEST(gil::equal_pixels(gil::view(img_out_512), gil::view(img_expected_out_512)));
+    BOOST_TEST(gil::equal_pixels(gil::view(img_out_512), gil::view(img_expected_out_512)));
 
 }
 
@@ -137,8 +112,8 @@ void basic_test()
         for (int j = 0; j < 5; ++j)
             nth_channel_view(gil::view(img_in), 0)(i, j)[0] = pixel++;
 
-    std::vector<float> v = {0, 0, 0, 0, 0, 0, 0, 1, 0};
-    std::vector<float> p = {0, 0, 0, 0, 0, 0, 0, 1, 0};
+    std::vector<float> v = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    std::vector<float> p = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     gil::detail::kernel_2d<float> kernel(v.begin(), v.size(), 1, 1);
     // for (int i = 0 ; i < 3; ++i)
     // {
@@ -182,7 +157,7 @@ void basic_test()
 int main()
 {
     test_convolve_2d_with_normalized_mean_filter();
-    // test_modified_correlate2D();
+    test_modified_correlate2D();
     basic_test();
 
     return ::boost::report_errors();

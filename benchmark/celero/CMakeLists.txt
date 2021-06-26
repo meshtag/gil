@@ -48,11 +48,6 @@ endif()
 
 add_dependencies(gil_celero project_celero)
 
-# option(WITH_IMG_32 "Option description" ON)
-# if(WITH_IMG_32)
-#   add_definitions(-DIMG_32)
-# endif()
-
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12.0)
   file(GLOB_RECURSE _benchmarks ${CMAKE_CURRENT_LIST_DIR}/*.cpp CONFIGURE_DEPEND)
 else()

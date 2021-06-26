@@ -69,7 +69,6 @@ public:
     double delta;
     int ddepth;
     int kernel_size;
-    const char* window_name = "filter2D Demo";
     const char* imageName_32 = "resize_32_gray.png";
     const char* imageName_256 = "resize_256_gray.png";
     const char* imageName_512 = "resize_512_gray.png";

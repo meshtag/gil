@@ -108,7 +108,7 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
 
         std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
 
-        for (std::ptrdiff_t index = 0, col = 0; index < buffer.size() - kernel.size(); 
+        for (std::ptrdiff_t index = 0, col = 0; index < buffer.size() - kernel.size() + 1; 
             index += kernel_dimension, ++col)
         {
             if (col < dst_view.width() && row < dst_view.height())
