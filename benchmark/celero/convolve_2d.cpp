@@ -15,6 +15,8 @@ using namespace cv;
 using namespace boost::gil;
 using namespace std;
 
+#include <iostream>
+
 namespace gil = boost::gil;
 
 class RandomImageGray8Fixture : public celero::TestFixture
@@ -79,18 +81,16 @@ public:
 #ifdef NDEBUG
 constexpr int samples_num = 30; // Celero default minimum
 constexpr int iterations = 100;
-// #define IMG_32
+#define IMG_32
 #define IMG_256
-// #define IMG_512
-// #define IMG_1024
-// #define IMG_2048
+#define IMG_512
+#define IMG_1024
+#define IMG_2048
 #else
 constexpr int samples_num = 1;
 constexpr int iterations = 1;
 #define IMG_32
 #endif
-
-
 
 #ifdef IMG_32
 BASELINE_F(Correlate2D_32, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
@@ -111,7 +111,6 @@ BENCHMARK_F(Correlate2D_32, Opencv_version, RandomImageGray8Fixture, samples_num
 }
 #endif
 
-#ifdef IMG_256
 BASELINE_F(Correlate2D_256, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
 {
     gil::detail::correlate_2d(gil::const_view(this -> img_256), this -> kernel, 
@@ -128,14 +127,12 @@ BENCHMARK_F(Correlate2D_256, Opencv_version, RandomImageGray8Fixture, samples_nu
 {
     opencv::filter2D(src_256, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
 }
-#endif
 
-#ifndef IMG_512
-// BENCHMARK_F(Correlate2D_512, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
-// {
-//     gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
-//         gil::view(this -> img_out_512));
-// }
+BENCHMARK_F(Correlate2D_512, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel, 
+        gil::view(this -> img_out_512));
+}
 
 // BENCHMARK_F(Correlate2D_512, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
 // {
@@ -147,9 +144,7 @@ BENCHMARK_F(Correlate2D_256, Opencv_version, RandomImageGray8Fixture, samples_nu
 // {
 //     opencv::filter2D(src_512, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
 // }
-#endif
 
-#ifdef IMG_1024
 BASELINE_F(Correlate2D_1024, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
 {
     gil::detail::correlate_2d(gil::const_view(this -> img_1024), this -> kernel, 
@@ -166,9 +161,7 @@ BENCHMARK_F(Correlate2D_1024, Opencv_version, RandomImageGray8Fixture, samples_n
 {
     opencv::filter2D(src_1024, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
 }
-#endif
 
-#ifdef IMG_2048
 BASELINE_F(Correlate2D_2048, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
 {
     gil::detail::correlate_2d(gil::const_view(this -> img_2048), this -> kernel, 
@@ -185,6 +178,5 @@ BENCHMARK_F(Correlate2D_2048, Opencv_version, RandomImageGray8Fixture, samples_n
 {
     opencv::filter2D(src_2048, dst, ddepth , kernel1, anchor, delta, BORDER_DEFAULT);
 }
-#endif
 
 CELERO_MAIN
