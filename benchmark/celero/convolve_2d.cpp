@@ -55,11 +55,11 @@ public:
         this -> img_out1_2048.recreate(this -> img_2048.dimensions());
 
         // Loads an image
-        src_32 = opencv::imread(opencv::samples::findFile( imageName_32), opencv::IMREAD_COLOR);
-        src_256 = opencv::imread(opencv::samples::findFile( imageName_256), opencv::IMREAD_COLOR);
-        src_512 = opencv::imread(opencv::samples::findFile( imageName_512), opencv::IMREAD_COLOR);
-        src_1024 = opencv::imread(opencv::samples::findFile( imageName_1024), opencv::IMREAD_COLOR);
-        src_2048 = opencv::imread(opencv::samples::findFile( imageName_2048), opencv::IMREAD_COLOR);
+        src_32 = opencv::imread(opencv::samples::findFile( imageName_32), opencv::IMREAD_GRAYSCALE);
+        src_256 = opencv::imread(opencv::samples::findFile( imageName_256), opencv::IMREAD_GRAYSCALE);
+        src_512 = opencv::imread(opencv::samples::findFile( imageName_512), opencv::IMREAD_GRAYSCALE);
+        src_1024 = opencv::imread(opencv::samples::findFile( imageName_1024), opencv::IMREAD_GRAYSCALE);
+        src_2048 = opencv::imread(opencv::samples::findFile( imageName_2048), opencv::IMREAD_GRAYSCALE);
         anchor = Point( -1, -1 );
         delta = 0;
         ddepth = -1;
@@ -128,11 +128,13 @@ BENCHMARK_F(Correlate2D_32_3x3, Second_modif, RandomImageGray8Fixture, samples_n
 {
     gil::detail::image_correlate(gil::const_view(this -> img_32), this -> v, 
         gil::view(this -> img_out1_32));
+    // gil::write_view("img_out1.png", gil::view(this -> img_out1_32), png_tag{});
 }
 
 BENCHMARK_F(Correlate2D_32_3x3, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
 {
     opencv::filter2D(src_32, dst, ddepth , kernel1_3x3, anchor, delta, BORDER_DEFAULT);
+    // opencv::imwrite("dst.png", dst);
 }
 #endif
 
