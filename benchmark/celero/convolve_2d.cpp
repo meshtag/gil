@@ -7,11 +7,9 @@
 
 #include "/usr/include/opencv4/opencv2/imgproc.hpp"
 #include "/usr/include/opencv4/opencv2/imgcodecs.hpp"
-#include "/usr/include/opencv4/opencv2/highgui.hpp"
 namespace opencv = cv;
 using namespace cv;
 
-#include <boost/gil/extension/io/jpeg.hpp>
 using namespace boost::gil;
 using namespace std;
 
@@ -65,9 +63,6 @@ public:
         anchor = Point( -1, -1 );
         delta = 0;
         ddepth = -1;
-        // Loop - Will filter the image with different kernel sizes each 0.5 seconds
-        int ind = 0;
-        // Update kernel size for a normalized box filter
         kernel_size = 3 ;
         kernel1_3x3 = Mat::ones(kernel_size, kernel_size, CV_8U);
         kernel1_7x7 = Mat::ones(7, 7, CV_8U);
