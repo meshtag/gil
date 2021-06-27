@@ -25,7 +25,6 @@ public:
 
     std::vector<celero::TestFixture::ExperimentValue> getExperimentValues() const final
     {
-        // Generate sequence of square image sizes
         int const initial_power = static_cast<int>(std::ceil(std::log(64) / std::log(2)));
 
         std::vector<celero::TestFixture::ExperimentValue> problem_space;
