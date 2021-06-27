@@ -63,18 +63,21 @@ public:
         anchor = Point( -1, -1 );
         delta = 0;
         ddepth = -1;
-        kernel_size = 3 ;
-        kernel1_3x3 = Mat::ones(kernel_size, kernel_size, CV_8U);
-        kernel1_7x7 = Mat::ones(7, 7, CV_8U);
+        kernel_size = 3;
+        kernel1_3x3 = Mat{1, 2, 3, 4, 5, 6, 7, 8, 9};
+        kernel1_7x7 = Mat{
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4 
+        };
     }
 
     gil::gray8_image_t img_32, img_256, img_512, img_1024, img_2048;
     gil::gray8_image_t img_out_32, img_out_256, img_out_512, img_out_1024, img_out_2048;
     gil::gray8_image_t img_out1_32, img_out1_256, img_out1_512, img_out1_1024, img_out1_2048;
-    std::vector<float> v = {1, 1, 1, 1, 1, 1, 1, 1, 1};
+    std::vector<float> v = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     std::vector<float> k_7x7 = {
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4 
     };
     gil::detail::kernel_2d<float> kernel_3x3{gil::detail::kernel_2d<float>(v.begin(), v.size(), 
         1, 1)};
