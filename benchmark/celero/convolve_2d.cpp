@@ -128,13 +128,11 @@ BENCHMARK_F(Correlate2D_32_3x3, Second_modif, RandomImageGray8Fixture, samples_n
 {
     gil::detail::image_correlate(gil::const_view(this -> img_32), this -> v, 
         gil::view(this -> img_out1_32));
-    // gil::write_view("img_out1.png", gil::view(this -> img_out1_32), png_tag{});
 }
 
 BENCHMARK_F(Correlate2D_32_3x3, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
 {
     opencv::filter2D(src_32, dst, ddepth , kernel1_3x3, anchor, delta, BORDER_DEFAULT);
-    // opencv::imwrite("dst.png", dst);
 }
 #endif
 
