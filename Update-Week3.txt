@@ -1,0 +1,15 @@
+Week 3 (21/06/21 - 28/06/21)
+1. Modified benchmark file(
+   https://github.com/meshtag/gil/blob/Improve_buffer_update/benchmark/celero/convolve_2d.cpp)
+   in accordance with instructions given by Olzhas.
+
+2. Added benchmarks for testing with different kernel sizes.
+
+3. Created this version(
+    https://github.com/meshtag/gil/blob/Improve_buffer_update/include/boost/gil/extension/numeric/convolve_novel.hpp)
+    and benchmarked its performance. 
+    
+4. Created this(
+   https://github.com/meshtag/gil/blob/Improve_buffer_update/Screenshot%20from%202021-06-28%2017-57-56.png)
+   flowchart for documenting my approach in current version. Its purpose is for easy review of
+   code and should help us in keeping a record of different changes made for optimization.
