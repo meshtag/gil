@@ -13,3 +13,4 @@ Week 3 (21/06/21 - 28/06/21)
    https://github.com/meshtag/gil/blob/Improve_buffer_update/Screenshot%20from%202021-06-28%2017-57-56.png)
    flowchart for documenting my approach in current version. Its purpose is for easy review of
    code and should help us in keeping a record of different changes made for optimization.
+   
