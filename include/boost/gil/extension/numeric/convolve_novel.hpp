@@ -17,6 +17,7 @@
 #include <type_traits>
 #include <vector>
 #include <iostream>
+#include <execution>
 
 namespace boost { namespace gil { namespace detail { 
 
@@ -125,9 +126,9 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
         {
             if (col < dst_view.width() && row < dst_view.height())
             {
-                dst_view(col, row) = std::inner_product(buffer.begin() + index, 
-                    buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
-                    gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
+                dst_view(col, row) = std::transform_reduce(std::execution::par, 
+                    buffer.begin() + index, buffer.begin() + index + kernel.size(), 
+                    kernel.begin(), zero_pixel, gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
                     gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
             }
         }
