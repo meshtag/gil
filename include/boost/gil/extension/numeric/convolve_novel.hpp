@@ -1,3 +1,4 @@
+
 #ifndef BOOST_GIL_EXTENSION_NUMERIC_CONVOLVE_NOVEL_HPP
 #define BOOST_GIL_EXTENSION_NUMERIC_CONVOLVE_NOVEL_HPP
 
@@ -100,25 +101,13 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
     using pixel_t = typename SrcView::value_type;
     std::vector<pixel_t> buffer(kernel_dimension * gil::view(img_in_modified).width());
 
-    auto buffer_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 
-            0, 0, gil::view(img_in_modified).width(), kernel_dimension));
-
-    std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
-
     for (std::ptrdiff_t row = 0; 
         row <= gil::view(img_in_modified).height() - kernel_dimension; ++row)
     {
-        if (row)
-        {
-            for (std::ptrdiff_t buffer_index = 0, view_col = 0; buffer_index < buffer.size(); 
-                buffer_index += kernel_dimension, ++view_col)
-            {
-                std::rotate(buffer.begin() + buffer_index, buffer.begin() + buffer_index + 1, 
-                    buffer.begin() + buffer_index + kernel_dimension);
-                buffer[buffer_index + kernel_dimension - 1] = 
-                    gil::view(img_in_modified)(view_col, row + kernel_dimension - 1);
-            }
-        }
+        auto buffer_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 
+            0, row, gil::view(img_in_modified).width(), kernel_dimension));
+
+        std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
 
         for (std::ptrdiff_t index = 0, col = 0; index < buffer.size() - kernel.size() + 1; 
             index += kernel_dimension, ++col)
