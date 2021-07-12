@@ -1,4 +1,3 @@
-
 #ifndef BOOST_GIL_EXTENSION_NUMERIC_CONVOLVE_NOVEL_HPP
 #define BOOST_GIL_EXTENSION_NUMERIC_CONVOLVE_NOVEL_HPP
 
@@ -18,6 +17,8 @@
 #include <type_traits>
 #include <vector>
 #include <iostream>
+
+#include "immintrin.h" // for AVX 
 
 namespace boost { namespace gil { namespace detail { 
 
@@ -94,6 +95,8 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
     auto img_in_modified = gil::extend_row(gil::view(img_in_modified_col), kernel_dimension / 2, 
         gil::boundary_option::extend_zero);
 
+    __m128 k1 = _mm_load_ps(&kernel[0]), k2 = _mm_load_ps(&kernel[4]);
+
     using pixel_t = typename SrcView::value_type;
     pixel_t zero_pixel;
     pixel_zeros_t<pixel_t>()(zero_pixel);
@@ -101,25 +104,78 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
     using pixel_t = typename SrcView::value_type;
     std::vector<pixel_t> buffer(kernel_dimension * gil::view(img_in_modified).width());
 
+    auto buffer_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 
+            0, 0, gil::view(img_in_modified).width(), kernel_dimension));
+
+    std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
+
     for (std::ptrdiff_t row = 0; 
         row <= gil::view(img_in_modified).height() - kernel_dimension; ++row)
     {
-        auto buffer_view = gil::transposed_view(gil::subimage_view(gil::view(img_in_modified), 
-            0, row, gil::view(img_in_modified).width(), kernel_dimension));
-
-        std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
-
-        for (std::ptrdiff_t index = 0, col = 0; index < buffer.size() - kernel.size() + 1; 
-            index += kernel_dimension, ++col)
+        if (row)
         {
-            if (col < dst_view.width() && row < dst_view.height())
+            for (std::ptrdiff_t buffer_index = 0, view_col = 0; buffer_index < buffer.size(); 
+                buffer_index += kernel_dimension, ++view_col)
             {
-                dst_view(col, row) = std::inner_product(buffer.begin() + index, 
-                    buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
-                    gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
-                    gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
+                std::rotate(buffer.begin() + buffer_index, buffer.begin() + buffer_index + 1, 
+                    buffer.begin() + buffer_index + kernel_dimension);
+                buffer[buffer_index + kernel_dimension - 1] = 
+                    gil::view(img_in_modified)(view_col, row + kernel_dimension - 1);
             }
         }
+
+        // for (std::ptrdiff_t index = 0, col = 0; index < buffer.size() - kernel.size() + 1; 
+        //     index += kernel_dimension, ++col)
+        // {
+        //     if (col < dst_view.width() && row < dst_view.height())
+        //     {
+        //         dst_view(col, row) = std::inner_product(buffer.begin() + index, 
+        //             buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
+        //             gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
+        //             gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
+        //     }
+        // }
+    
+        std::ptrdiff_t index = 0, col = 0;
+        while (index < 1535)
+        {
+
+            if (col < dst_view.width() && row < dst_view.height())
+            {
+                float aux_total = 0.0f;
+                auto pointer1 = &buffer[index], pointer2 = &buffer[index + 4];
+                __m128 buf1 = _mm_loadu_ps((float *)pointer1), buf2 = _mm_loadu_ps((float *)pointer2);
+                __m128 buf1_prod = _mm_mul_ps(buf1, k1), buf2_prod = _mm_mul_ps(buf2, k2);
+
+                __m128 shuf = _mm_shuffle_ps(buf1_prod, buf1_prod, _MM_SHUFFLE(2, 3, 0, 1));
+    
+                __m128 sums = _mm_add_ps(buf1_prod, shuf);
+
+                shuf = _mm_movehl_ps(shuf, sums);
+        
+                sums = _mm_add_ss(sums, shuf);
+
+                // // ans[j] =  _mm_cvtss_f32(sums), ++j
+                aux_total += static_cast<float>(_mm_cvtss_f32(sums));
+
+            
+            
+                shuf = _mm_shuffle_ps(buf2_prod, buf2_prod, _MM_SHUFFLE(2, 3, 0, 1));
+    
+                sums = _mm_add_ps(buf2_prod, shuf);
+
+                shuf = _mm_movehl_ps(shuf, sums);
+        
+                sums = _mm_add_ss(sums, shuf);
+                aux_total += _mm_cvtss_f32(sums);
+
+                aux_total += kernel[8] * buffer[index + 8];
+                dst_view(col, row) = aux_total, ++col;
+                index += 9;
+            }
+        }
+
+        // std::cout << " buffer size   " << buffer.size() << "\n";
     }
 }
 
