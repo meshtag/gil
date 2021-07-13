@@ -96,8 +96,6 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
     auto img_in_modified = gil::extend_row(gil::view(img_in_modified_col), kernel_dimension / 2, 
         gil::boundary_option::extend_zero);
 
-    __m128 k1 = _mm_load_ps(&kernel[0]), k2 = _mm_load_ps(&kernel[4]);
-
     using pixel_t = typename SrcView::value_type;
     pixel_t zero_pixel;
     pixel_zeros_t<pixel_t>()(zero_pixel);
@@ -109,8 +107,6 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
             0, 0, gil::view(img_in_modified).width(), kernel_dimension));
 
     std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
-
-    // std::vector<float> ans_buffer(src_view.width() * src_);
 
     for (std::ptrdiff_t row = 0; 
         row <= gil::view(img_in_modified).height() - kernel_dimension; ++row)
@@ -127,52 +123,46 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
             }
         }
 
-        // for (std::ptrdiff_t index = 0, col = 0; index < buffer.size() - kernel.size() + 1; 
-        //     index += kernel_dimension, ++col)
-        // {
-        //     if (col < dst_view.width() && row < dst_view.height())
-        //     {
-        //         dst_view(col, row) = std::inner_product(buffer.begin() + index, 
-        //             buffer.begin() + index + kernel.size(), kernel.begin(), zero_pixel, 
-        //             gil::pixel_plus_t<pixel_t, pixel_t, pixel_t>(), 
-        //             gil::pixel_multiplies_scalar_t<pixel_t, float, pixel_t>());
-        //     }
-        // }
-    
-
         __m128* kernel_broadcasted = (__m128* )(alloca(16 * kernel.size()));
-        __m128 block, prod, acc = _mm_setzero_ps();
+        __m128 acc0 = _mm_setzero_ps(), acc1 = _mm_setzero_ps();
+        __m128 acc2 = _mm_setzero_ps(), acc3 = _mm_setzero_ps();
+        __m128 block0, block1, block2, block3;
+        __m128 prod0, prod1, prod2, prod3;
         
         for (int i = 0; i < kernel.size(); ++i)
             kernel_broadcasted[i] = _mm_set1_ps(kernel[i]);
 
-        for (std::ptrdiff_t index = 0; index < buffer.size() - 13; index += 4)
+        for (std::ptrdiff_t index = 0; index < buffer.size() - 13; index += 16)
         {
             for (std::ptrdiff_t start_k = 0; start_k < 9; ++start_k)
             {
-                auto pointer = &buffer[index + start_k];
-                block = _mm_loadu_ps((float *)pointer);
+                auto pointer0 = &buffer[index + start_k], pointer1 = &buffer[index + start_k + 1];
+                auto pointer2 = &buffer[index + start_k + 2], pointer3 = &buffer[index + start_k + 3];
 
-                prod = _mm_mul_ps(block, kernel_broadcasted[start_k]);
+                block0 = _mm_loadu_ps((float *)pointer0);
+                block1 = _mm_loadu_ps((float *)pointer1);
+                block2 = _mm_loadu_ps((float *)pointer2);
+                block3 = _mm_loadu_ps((float *)pointer3);
 
-                acc = _mm_add_ps(acc, prod);
+                prod0 = _mm_mul_ps(block0, kernel_broadcasted[start_k]);
+                prod1 = _mm_mul_ps(block1, kernel_broadcasted[start_k]);
+                prod2 = _mm_mul_ps(block2, kernel_broadcasted[start_k]);
+                prod3 = _mm_mul_ps(block3, kernel_broadcasted[start_k]);
+
+                acc0 = _mm_add_ps(acc0, prod0);
+                acc1 = _mm_add_ps(acc1, prod1);
+                acc2 = _mm_add_ps(acc2, prod2);
+                acc3 = _mm_add_ps(acc3, prod3);
             }
-            float ans_dummy[4];
-            _mm_storeu_ps(ans_dummy, acc);
+            float ans_dummy0[4], ans_dummy1[4], ans_dummy2[4], ans_dummy3[4];
+            _mm_storeu_ps(ans_dummy0, acc0);
+            _mm_storeu_ps(ans_dummy1, acc1);
+            _mm_storeu_ps(ans_dummy2, acc2);
+            _mm_storeu_ps(ans_dummy3, acc3);
         }
 
-
-
-
-
-
-
-
-
-        // std::cout << " buffer size   " << buffer.size() << "\n";
     }
 }
-
 } } } // namespace boost::gil::detail
 
 #endif

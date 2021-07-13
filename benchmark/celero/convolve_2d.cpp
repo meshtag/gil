@@ -194,22 +194,22 @@ BENCHMARK_F(Correlate2D_256_7x7, Opencv_version, RandomImageGray8Fixture, sample
 #endif
 
 #ifdef IMG_512_3x3
-// BASELINE_F(Correlate2D_512_3x3, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
-// {
-//     gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel_3x3, 
-//         gil::view(this -> img_out_512));
-// }
+BASELINE_F(Correlate2D_512_3x3, Gil_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    gil::detail::correlate_2d(gil::const_view(this -> img_512), this -> kernel_3x3, 
+        gil::view(this -> img_out_512));
+}
 
-BASELINE_F(Correlate2D_512_3x3, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
+BENCHMARK_F(Correlate2D_512_3x3, Second_modif, RandomImageGray8Fixture, samples_num, iterations)
 {
     gil::detail::image_correlate(gil::const_view(this -> img_512), this -> v, 
         gil::view(this -> img_out1_512));
 }
 
-// BENCHMARK_F(Correlate2D_512_3x3, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
-// {
-//     opencv::filter2D(src_512, dst, ddepth , kernel1_3x3, anchor, delta, BORDER_DEFAULT);
-// }
+BENCHMARK_F(Correlate2D_512_3x3, Opencv_version, RandomImageGray8Fixture, samples_num, iterations)
+{
+    opencv::filter2D(src_512, dst, ddepth , kernel1_3x3, anchor, delta, BORDER_DEFAULT);
+}
 #endif
 
 #ifdef IMG_512_7x7
