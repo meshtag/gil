@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "immintrin.h" // for AVX 
+#include <malloc.h>
 
 namespace boost { namespace gil { namespace detail { 
 
@@ -109,6 +110,8 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
 
     std::copy(buffer_view.begin(), buffer_view.end(), buffer.begin());
 
+    // std::vector<float> ans_buffer(src_view.width() * src_);
+
     for (std::ptrdiff_t row = 0; 
         row <= gil::view(img_in_modified).height() - kernel_dimension; ++row)
     {
@@ -136,44 +139,35 @@ void image_correlate(SrcView src_view, std::vector<float> kernel, DstView dst_vi
         //     }
         // }
     
-        std::ptrdiff_t index = 0, col = 0;
-        while (index < 1535)
+
+        __m128* kernel_broadcasted = (__m128* )(alloca(16 * kernel.size()));
+        __m128 block, prod, acc = _mm_setzero_ps();
+        
+        for (int i = 0; i < kernel.size(); ++i)
+            kernel_broadcasted[i] = _mm_set1_ps(kernel[i]);
+
+        for (std::ptrdiff_t index = 0; index < buffer.size() - 13; index += 4)
         {
-
-            if (col < dst_view.width() && row < dst_view.height())
+            for (std::ptrdiff_t start_k = 0; start_k < 9; ++start_k)
             {
-                float aux_total = 0.0f;
-                auto pointer1 = &buffer[index], pointer2 = &buffer[index + 4];
-                __m128 buf1 = _mm_loadu_ps((float *)pointer1), buf2 = _mm_loadu_ps((float *)pointer2);
-                __m128 buf1_prod = _mm_mul_ps(buf1, k1), buf2_prod = _mm_mul_ps(buf2, k2);
+                auto pointer = &buffer[index + start_k];
+                block = _mm_loadu_ps((float *)pointer);
 
-                __m128 shuf = _mm_shuffle_ps(buf1_prod, buf1_prod, _MM_SHUFFLE(2, 3, 0, 1));
-    
-                __m128 sums = _mm_add_ps(buf1_prod, shuf);
+                prod = _mm_mul_ps(block, kernel_broadcasted[start_k]);
 
-                shuf = _mm_movehl_ps(shuf, sums);
-        
-                sums = _mm_add_ss(sums, shuf);
-
-                // // ans[j] =  _mm_cvtss_f32(sums), ++j
-                aux_total += static_cast<float>(_mm_cvtss_f32(sums));
-
-            
-            
-                shuf = _mm_shuffle_ps(buf2_prod, buf2_prod, _MM_SHUFFLE(2, 3, 0, 1));
-    
-                sums = _mm_add_ps(buf2_prod, shuf);
-
-                shuf = _mm_movehl_ps(shuf, sums);
-        
-                sums = _mm_add_ss(sums, shuf);
-                aux_total += _mm_cvtss_f32(sums);
-
-                aux_total += kernel[8] * buffer[index + 8];
-                dst_view(col, row) = aux_total, ++col;
-                index += 9;
+                acc = _mm_add_ps(acc, prod);
             }
+            float ans_dummy[4];
+            _mm_storeu_ps(ans_dummy, acc);
         }
+
+
+
+
+
+
+
+
 
         // std::cout << " buffer size   " << buffer.size() << "\n";
     }

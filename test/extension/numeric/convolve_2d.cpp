@@ -156,8 +156,8 @@ void basic_test()
 int main()
 {
     test_convolve_2d_with_normalized_mean_filter();
-    test_modified_correlate2D();
-    // basic_test();
+    // test_modified_correlate2D();
+    basic_test();
 
     return ::boost::report_errors();
 }
